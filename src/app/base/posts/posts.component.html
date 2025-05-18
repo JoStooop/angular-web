@@ -1,0 +1,74 @@
+@if (isLoading) {
+    <div class="loader-posts">Loading posts...</div>
+}
+
+@if (posts.length === 0) {
+    <div>Posts did not load</div>
+} @else {
+    <div class="search">
+        <input
+            type="text"
+            class="search-input"
+            placeholder="Search"
+            [(ngModel)]="search"
+            (ngModelChange)="handleSearch()">
+    </div>
+
+    <form class="form" (submit)="handleFormCreatePost()">
+        <div class="form-group">
+            <label class="form-label" for="title">Title:</label>
+            <input class="form-input"
+                   id="title"
+                   type="text"
+                   placeholder="Enter title"
+                   name="title"
+                   [(ngModel)]="formGroup.title"/>
+        </div>
+        <div class="form-group">
+            <label class="form-label" for="body">Body:</label>
+            <input class="form-input"
+                   id="body"
+                   type="text"
+                   placeholder="Enter body"
+                   name="body"
+                   [(ngModel)]="formGroup.body"/>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="form-button" [disabled]="!formGroup.title || !formGroup.body">Create post
+            </button>
+        </div>
+    </form>
+
+    <div class="filter">
+        <button class="filter-toggle" (click)="handleOpenFilterMenu()">
+            {{ sortColumn ? 'Filter: ' + sortColumn : 'Filter' }}
+        </button>
+        @if (sortColumn) {
+            <span class="filter-reset" (click)="handleResetFilter()">Сбросить</span>
+        }
+
+        @if (isOpenFilterMenu) {
+            <ul class="filter-menu">
+                <!--<li class="filter-item" [class.filter-item__active]="isSorted('body')">title</li>-->
+                <li class="filter-item"
+                    [class.filter-item__active]="isSorted('body')"
+                    (click)="handleSort('body')">body
+                </li>
+            </ul>
+        }
+    </div>
+
+    @if (search && filteredPosts.length === 0) {
+        <div>Posts not found</div>
+    } @else {
+        <section>
+            @for (post of filteredPosts; track post.id) {
+                <app-post-card
+                    [post]="post"
+                    (deleted)="handleDelete($event)"
+                    (edited)="handelEditPost($event)"
+                ></app-post-card>
+            }
+        </section>
+    }
+}

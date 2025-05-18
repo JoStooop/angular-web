@@ -1,0 +1,18 @@
+<header class="header">
+    <nav class="header-nav">
+        <ul class="nav-list">
+            <li><a class="nav-link"
+                   [routerLink]="ROUTE.HOME.PATH"
+                   routerLinkActive="active-link"
+                   [routerLinkActiveOptions]="{exact: true}">
+                {{ ROUTE.HOME.TITLE }}
+            </a></li>
+            <li><a class="nav-link"
+                   [routerLink]="ROUTE.POSTS.PATH"
+                   routerLinkActive="active-link"
+                   [routerLinkActiveOptions]="{exact: true}">
+                {{ ROUTE.POSTS.TITLE }}
+            </a></li>
+        </ul>
+    </nav>
+</header>
