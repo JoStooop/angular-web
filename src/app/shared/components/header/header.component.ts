@@ -4,6 +4,7 @@ import {ROUTE_PATHS} from "../../constants/route-paths";
 
 @Component({
     selector: 'app-header',
+    standalone: true,
     imports: [
         RouterLink,
         RouterLinkActive

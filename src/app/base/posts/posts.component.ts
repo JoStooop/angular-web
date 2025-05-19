@@ -14,6 +14,7 @@ type SortColumn = 'title' | 'body'
 
 @Component({
     selector: 'app-posts',
+    standalone: true,
     imports: [
         PostCardComponent,
         FormsModule,
