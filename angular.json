@@ -18,8 +18,8 @@
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "dist/angular-todo",
-            "index": "src/index.html",
-            "browser": "src/main.ts",
+            "index": "src/apps/ru/src/index.html",
+            "browser": "src/apps/ru/src/main.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -32,7 +32,7 @@
               }
             ],
             "styles": [
-              "src/styles.scss"
+              "src/apps/ru/src/app/core/common/styles/styles.scss"
             ],
             "scripts": []
           },

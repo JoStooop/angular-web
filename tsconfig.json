@@ -19,7 +19,7 @@
         "target": "ES2022",
         "module": "ES2022",
         "paths": {
-            "@base/*": ["app/base/*"]
+            "@base/*": ["apps/ru/src/app/base/*"],
         }
     },
     "angularCompilerOptions": {
