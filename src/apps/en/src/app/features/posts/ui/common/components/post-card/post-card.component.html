@@ -30,11 +30,11 @@
 
         <div class="post-actions">
             @if (isEditPost) {
-                <button class="action-btn" (click)="saveEdit()">Save</button>
-                <button class="action-btn" (click)="cancelEdit()">Cancel</button>
+                <button class="action-btn" (click)="submitEditedPost()">Save</button>
+                <button class="action-btn" (click)="cancelEditingPost()">Cancel</button>
             } @else {
-                <button class="action-btn" (click)="emitDeleted(post.id)">Delete</button>
-                <button class="action-btn" (click)="handleEdit()">Edit</button>
+                <button class="action-btn" (click)="deletePost(post.id)">Delete</button>
+                <button class="action-btn" (click)="startEditingPost()">Edit</button>
             }
         </div>
     </div>

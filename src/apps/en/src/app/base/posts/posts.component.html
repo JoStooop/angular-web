@@ -11,10 +11,10 @@
             class="search-input"
             placeholder="Search"
             [(ngModel)]="search"
-            (ngModelChange)="handleSearch()">
+            (ngModelChange)="searchPosts()">
     </div>
 
-    <form class="form" (submit)="handleFormCreatePost()">
+    <form class="form" (submit)="createPost()">
         <div class="form-group">
             <label class="form-label" for="title">Title:</label>
             <input class="form-input"
@@ -40,19 +40,18 @@
     </form>
 
     <div class="filter">
-        <button class="filter-toggle" (click)="handleOpenFilterMenu()">
+        <button class="filter-toggle" (click)="toggleFilterMenu()">
             {{ sortColumn ? 'Filter: ' + sortColumn : 'Filter' }}
         </button>
         @if (sortColumn) {
-            <span class="filter-reset" (click)="handleResetFilter()">Сбросить</span>
+            <span class="filter-reset" (click)="resetPostFilters()">Сбросить</span>
         }
 
         @if (isOpenFilterMenu) {
             <ul class="filter-menu">
-                <!--<li class="filter-item" [class.filter-item__active]="isSorted('body')">title</li>-->
                 <li class="filter-item"
                     [class.filter-item__active]="isSorted('body')"
-                    (click)="handleSort('body')">body
+                    (click)="sortPostsBy('body')">body
                 </li>
             </ul>
         }
@@ -65,8 +64,8 @@
             @for (post of filteredPosts; track post.id) {
                 <apps-post-card
                     [post]="post"
-                    (deleted)="handleDelete($event)"
-                    (edited)="handelEditPost($event)"
+                    (postDeleted)="postDeleted($event)"
+                    (postEdited)="postEdited($event)"
                 ></apps-post-card>
             }
         </section>

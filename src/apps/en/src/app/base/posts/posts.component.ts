@@ -40,7 +40,6 @@ export class PostsComponent implements OnInit {
     constructor(public postsService: PostsService) {
     }
 
-    // loading в tap ?
     ngOnInit(): void {
         this.isLoading = true
         this.postsService.loadPosts(5).subscribe({
@@ -53,12 +52,7 @@ export class PostsComponent implements OnInit {
         })
     }
 
-    public handleSearch(): void {
-        this.filteredPosts = this.posts.filter(post => post.body.toLowerCase().includes(this.search.toLowerCase()))
-    }
-
-    // Здесь что-то не так. вернуться
-    public handleDelete(id: number): void {
+    public postDeleted(id: number): void {
         this.postsService.deletePost(id).subscribe({
             next: () => {
                 this.posts = this.posts.filter(post => post.id !== id)
@@ -67,8 +61,7 @@ export class PostsComponent implements OnInit {
         })
     }
 
-    // Надо что-то придумать чтобы от этого избавиться, тригерить как-то posts чтобы обновлялся
-    public handelEditPost(post: Post): void {
+    public postEdited(post: Post): void {
         this.postsService.updatePost(post).subscribe({
             next: () => {
                 this.posts = this.posts.map(p => p.id === post.id ? post : p)
@@ -77,9 +70,7 @@ export class PostsComponent implements OnInit {
         })
     }
 
-    public handleFormCreatePost(): void {
-        // event.preventDefault(); - видимо не нужен?
-
+    public createPost(): void {
         const newPost = {
             id: this.posts.length + 1, // заглушка
             title: this.formGroup.title,
@@ -96,7 +87,11 @@ export class PostsComponent implements OnInit {
         })
     }
 
-    public handleOpenFilterMenu(): void {
+    public searchPosts(): void {
+        this.filteredPosts = this.posts.filter(post => post.body.toLowerCase().includes(this.search.toLowerCase()))
+    }
+
+    public toggleFilterMenu(): void {
         this.isOpenFilterMenu = !this.isOpenFilterMenu
     }
 
@@ -104,12 +99,12 @@ export class PostsComponent implements OnInit {
         return this.sortColumn === column;
     }
 
-    handleResetFilter(): void {
+    public resetPostFilters(): void {
         this.sortColumn = null;
         this.filteredPosts = [...this.posts];
     }
 
-    handleSort(column: SortColumn): void {
+    public sortPostsBy(column: SortColumn): void {
         this.sortColumn = column;
         this.filteredPosts = [...this.posts].sort((a, b) => a[column] > b[column] ? 1 : -1);
         this.isOpenFilterMenu = false;
