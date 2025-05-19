@@ -11,15 +11,15 @@
         }
       },
       "root": "",
-      "sourceRoot": "src",
+      "sourceRoot": "apps",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/angular-todo",
-            "index": "src/apps/ru/src/index.html",
-            "browser": "src/apps/ru/src/main.ts",
+            "outputPath": "dist/angular-web",
+            "index": "apps/en/src/index.html",
+            "browser": "apps/en/src/main.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -32,7 +32,7 @@
               }
             ],
             "styles": [
-              "src/apps/ru/src/app/core/common/styles/styles.scss"
+              "libs/assets/src/lib/styles/styles.scss"
             ],
             "scripts": []
           },
@@ -91,7 +91,7 @@
               }
             ],
             "styles": [
-              "src/styles.scss"
+              "libs/assets/src/lib/styles/styles.scss"
             ],
             "scripts": []
           }
