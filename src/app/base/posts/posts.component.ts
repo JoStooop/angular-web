@@ -10,7 +10,7 @@ interface PostForm {
     body: string
 }
 
-type SortColumn = 'title' | 'body'
+type FilterType = 'title' | 'body' | 'noTitle' | 'noBody'
 
 @Component({
     selector: 'apps-posts',
@@ -25,7 +25,7 @@ export class PostsComponent implements OnInit {
     public isLoading: boolean = false
 
     public isOpenFilterMenu: boolean = false
-    public sortColumn: SortColumn | null = null;
+    public filterType: FilterType | null = null;
 
     public search: string = ''
     public posts: Post[] = []
@@ -100,18 +100,35 @@ export class PostsComponent implements OnInit {
         this.isOpenFilterMenu = !this.isOpenFilterMenu
     }
 
-    public isSorted(column: SortColumn): boolean {
-        return this.sortColumn === column;
+    public isFiltered(type: FilterType): boolean {
+        return this.filterType === type;
     }
 
     handleResetFilter(): void {
-        this.sortColumn = null;
+        this.filterType = null;
         this.filteredPosts = [...this.posts];
     }
 
-    handleSort(column: SortColumn): void {
-        this.sortColumn = column;
-        this.filteredPosts = [...this.posts].sort((a, b) => a[column] > b[column] ? 1 : -1);
+    handleFilter(type: FilterType): void {
+        this.filterType = type
+
+        switch (type) {
+            case "title":
+                this.filteredPosts = this.posts.filter(post => post.title.length > 0)
+                break;
+            case "body":
+                this.filteredPosts = this.posts.filter(post => post.body.length > 0);
+                break
+            case "noTitle":
+                this.filteredPosts = this.posts.filter(post => post.title.length === 0)
+                break
+            case "noBody":
+                this.filteredPosts = this.posts.filter(post => post.body.length === 0)
+                break
+            default:
+                this.filteredPosts = [...this.posts]
+
+        }
         this.isOpenFilterMenu = false;
     }
 }
