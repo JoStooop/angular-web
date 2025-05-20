@@ -5,14 +5,6 @@
 @if (posts.length === 0) {
     <div>Posts did not load</div>
 } @else {
-    <div class="search">
-        <input
-            type="text"
-            class="search-input"
-            placeholder="Search"
-            [(ngModel)]="search"
-            (ngModelChange)="handleSearch()">
-    </div>
 
     <form class="form" (submit)="handleFormCreatePost()">
         <div class="form-group">
@@ -38,6 +30,15 @@
             </button>
         </div>
     </form>
+
+    <div class="search">
+        <input
+                type="text"
+                class="search-input"
+                placeholder="Search"
+                [(ngModel)]="search"
+                (ngModelChange)="handleSearch()">
+    </div>
 
     <div class="filter">
         <button class="filter-toggle" (click)="handleOpenFilterMenu()">
