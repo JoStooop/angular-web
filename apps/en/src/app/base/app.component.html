@@ -1,0 +1,16 @@
+@if (true) {
+    <apps-header></apps-header>
+    <router-outlet/>
+} @else {
+    @defer {
+        <div class="error-wrapper">
+            <span class="error">Все сломано :(</span>
+        </div>
+    } @loading (minimum 2000) {
+        <div class="loader-wrapper">
+            <span class="loader">Загрузка...</span>
+        </div>
+    }
+}
+
+<!--  Просто экспериментировал с defer. СМотрел как в DBA это работало    -->
