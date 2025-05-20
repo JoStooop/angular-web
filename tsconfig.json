@@ -19,11 +19,7 @@
         "importHelpers": true,
         "target": "ES2022",
         "module": "ES2022",
-        "paths": {
-            "@angular-web/assets/*": [
-                "libs/assets/src/index.ts"
-            ]
-        }
+        "paths": {}
     },
     "angularCompilerOptions": {
         "enableI18nLegacyMessageIdFormat": false,
@@ -32,8 +28,8 @@
         "strictTemplates": true
     },
     "include": [
-        "apps/**/*.ts",
-        "apps/**/*.html",
-        "apps/**/*.scss"
+        "src/**/*.ts",
+        "src/**/*.html",
+        "src/**/*.scss"
     ]
 }

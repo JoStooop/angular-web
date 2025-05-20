@@ -5,7 +5,7 @@ import { RouterLink } from "@angular/router"
 import {ROUTE_PATHS} from "../../core/common/const/route-paths";
 
 @Component({
-    selector: 'apps-error',
+    selector: 'app-error',
     standalone: true,
     imports: [
         RouterLink
