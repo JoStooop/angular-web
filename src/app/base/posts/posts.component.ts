@@ -4,11 +4,8 @@ import {FormsModule} from "@angular/forms";
 import {Post} from "../../features/posts/common/models/post.model";
 import {PostsService} from "../../features/posts/application/services/posts.service";
 import {PostCardComponent} from "../../features/posts/ui/common/components/post-card/post-card.component";
-
-interface PostForm {
-    title: string
-    body: string
-}
+import {LoadingStatus} from "../../core/common/models/loadingStatus.model";
+import {EditPostForm} from "../../features/posts/ui/common/models/post-form.model";
 
 type SortColumn = 'title' | 'body'
 
@@ -22,7 +19,8 @@ type SortColumn = 'title' | 'body'
     styleUrl: './posts.component.scss'
 })
 export class PostsComponent implements OnInit {
-    public isLoading: boolean = false
+
+    public postsLoadingStatus: LoadingStatus = 'idle'
 
     public isOpenFilterMenu: boolean = false
     public sortColumn: SortColumn | null = null;
@@ -32,7 +30,7 @@ export class PostsComponent implements OnInit {
 
     public filteredPosts: Post[] = []
 
-    public formGroup: PostForm = {
+    public formGroup: EditPostForm = {
         title: '',
         body: ''
     }
@@ -40,16 +38,15 @@ export class PostsComponent implements OnInit {
     constructor(public postsService: PostsService) {
     }
 
-    // loading в tap ?
     ngOnInit(): void {
-        this.isLoading = true
+        this.postsLoadingStatus = 'loading'
         this.postsService.loadPosts(5).subscribe({
             next: (posts) => {
                 this.posts = posts
                 this.filteredPosts = [...posts]
             },
-            error: (error) => console.log('error', error),
-            complete: () => this.isLoading = false
+            error: () => this.postsLoadingStatus = 'failed',
+            complete: () => this.postsLoadingStatus = 'succeeded'
         })
     }
 
@@ -57,29 +54,25 @@ export class PostsComponent implements OnInit {
         this.filteredPosts = this.posts.filter(post => post.body.toLowerCase().includes(this.search.toLowerCase()))
     }
 
-    // Здесь что-то не так. вернуться
     public handleDelete(id: number): void {
         this.postsService.deletePost(id).subscribe({
             next: () => {
                 this.posts = this.posts.filter(post => post.id !== id)
                 this.filteredPosts = this.filteredPosts.filter(post => post.id !== id)
-            }
+            },
         })
     }
 
-    // Надо что-то придумать чтобы от этого избавиться, тригерить как-то posts чтобы обновлялся
     public handelEditPost(post: Post): void {
         this.postsService.updatePost(post).subscribe({
             next: () => {
                 this.posts = this.posts.map(p => p.id === post.id ? post : p)
                 this.filteredPosts = this.filteredPosts.map(p => p.id === post.id ? post : p)
-            }
+            },
         })
     }
 
     public handleFormCreatePost(): void {
-        // event.preventDefault(); - видимо не нужен?
-
         const newPost = {
             id: this.posts.length + 1, // заглушка
             title: this.formGroup.title,

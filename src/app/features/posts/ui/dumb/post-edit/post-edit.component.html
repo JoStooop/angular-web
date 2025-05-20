@@ -1,0 +1,18 @@
+<div class="post">
+    <div class="post-content">
+        <div class="post-header">
+            <span class="post-id">{{ post.id }}</span>
+            <input class="post-title__edit"
+                   [(ngModel)]="editPostForm.title"
+                   placeholder="Enter title"/>
+        </div>
+        <textarea class="post-body__edit"
+                  [(ngModel)]="editPostForm.body"
+                  placeholder="Enter body"></textarea>
+    </div>
+
+    <div class="post-actions">
+        <button class="action-btn" (click)="savePost.emit(post)">Save</button>
+        <button class="action-btn" (click)="cancelEdit.emit()">Cancel</button>
+    </div>
+</div>

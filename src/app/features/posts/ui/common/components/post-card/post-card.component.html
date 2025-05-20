@@ -1,41 +1,19 @@
-@if (!post) {
-    <p>Пост не загрузился</p>
-} @else {
-    <div class="post">
-        <div class="post-content">
-            <div class="post-header">
-                <span class="post-id">{{ post.id }}</span>
+@switch (currentStatePost) {
+    @case (POST_STATES.EMPTY) {
+        <p>Пост не загрузился</p>
+    }
+    @case (POST_STATES.VIEW) {
+        <app-post-view [post]="post"
+                       (deletePost)="onDeletePost($event)"
+                       (editPost)="onStartEditPost()">
+        </app-post-view>
+    }
+    @case (POST_STATES.EDIT) {
+        <app-post-edit [post]="post"
+                       [editPostForm]="editPostForm"
+                       (savePost)="onSavePost($event)"
+                       (cancelEdit)="onCancelEdit()">
+        </app-post-edit>
+    }
 
-                @if (isEditPost) {
-                    <input class="post-title__edit"
-                           [(ngModel)]="editForm.title"
-                           placeholder="Enter title"
-                    />
-                } @else {
-                    <h3 class="post-title">{{ post.title }}</h3>
-                }
-
-            </div>
-
-            @if (isEditPost) {
-                <textarea class="post-body__edit"
-                    [(ngModel)]="editForm.body"
-                    placeholder="Enter body"
-                ></textarea>
-            } @else {
-                <p class="post-body">{{ post.body }}</p>
-            }
-
-        </div>
-
-        <div class="post-actions">
-            @if (isEditPost) {
-                <button class="action-btn" (click)="saveEdit()">Save</button>
-                <button class="action-btn" (click)="cancelEdit()">Cancel</button>
-            } @else {
-                <button class="action-btn" (click)="emitDeleted(post.id)">Delete</button>
-                <button class="action-btn" (click)="handleEdit()">Edit</button>
-            }
-        </div>
-    </div>
 }

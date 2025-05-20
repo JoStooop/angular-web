@@ -1,4 +1,4 @@
-@if (isLoading) {
+@if (postsLoadingStatus === 'loading') {
     <div class="loader-posts">Loading posts...</div>
 }
 
@@ -7,11 +7,11 @@
 } @else {
     <div class="search">
         <input
-            type="text"
-            class="search-input"
-            placeholder="Search"
-            [(ngModel)]="search"
-            (ngModelChange)="handleSearch()">
+                type="text"
+                class="search-input"
+                placeholder="Search"
+                [(ngModel)]="search"
+                (ngModelChange)="handleSearch()">
     </div>
 
     <form class="form" (submit)="handleFormCreatePost()">
@@ -63,10 +63,9 @@
     } @else {
         <section>
             @for (post of filteredPosts; track post.id) {
-                <apps-post-card
-                    [post]="post"
-                    (deleted)="handleDelete($event)"
-                    (edited)="handelEditPost($event)"
+                <apps-post-card [post]="post"
+                                (postDeleted)="handleDelete($event)"
+                                (postEdited)="handelEditPost($event)"
                 ></apps-post-card>
             }
         </section>
