@@ -1,0 +1,14 @@
+import {Component} from '@angular/core';
+import {RouterOutlet} from '@angular/router';
+import {HeaderComponent} from "../ui/dumb/header/header.component";
+
+@Component({
+    selector: 'apps-root',
+    standalone: true,
+    imports: [RouterOutlet, HeaderComponent],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss'
+})
+export class AppComponent {
+    title = 'angular-posts';
+}
