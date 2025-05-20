@@ -43,7 +43,7 @@ export class PostsComponent implements OnInit {
     // loading в tap ?
     ngOnInit(): void {
         this.isLoading = true
-        this.postsService.loadPosts(5).subscribe({
+        this.postsService.loadPosts(20).subscribe({
             next: (posts) => {
                 this.posts = posts
                 this.filteredPosts = [...posts]
