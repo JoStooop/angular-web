@@ -6,7 +6,7 @@ export interface PostsState {
     status: LoadingStatus;
     error: string | null;
 }
-
+// TODO: планировал вынести хранение постов сюда. Еще думаю над этим
 export function createInitialState(): PostsState {
     return {
         data: [],
