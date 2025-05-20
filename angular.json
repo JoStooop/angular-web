@@ -11,7 +11,7 @@
         }
       },
       "root": "",
-      "sourceRoot": "apps",
+      "sourceRoot": "src",
       "prefix": "app",
       "architect": {
         "build": {
@@ -21,8 +21,8 @@
             "index": "src/apps/en/src/index.html",
             "browser": "src/apps/en/src/main.ts",
             "outputPath": "dist/angular-web",
-            "index": "apps/en/src/index.html",
-            "browser": "apps/en/src/main.ts",
+            "index": "src/index.html",
+            "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
             ],
@@ -35,7 +35,7 @@
               }
             ],
             "styles": [
-              "libs/assets/src/lib/styles/styles.scss"
+              "src/app/core/common/styles/styles.scss"
             ],
             "scripts": []
           },
@@ -94,7 +94,7 @@
               }
             ],
             "styles": [
-              "libs/assets/src/lib/styles/styles.scss"
+              "src/app/core/common/styles/styles.scss"
             ],
             "scripts": []
           }
