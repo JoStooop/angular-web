@@ -112,18 +112,21 @@ export class PostsComponent implements OnInit {
     handleFilter(type: FilterType): void {
         this.filterType = type
 
+        const hasTitle = (post: Post) => post.title.length > 0;
+        const hasBody = (post: Post) => post.body.length > 0;
+
         switch (type) {
             case "title":
-                this.filteredPosts = this.posts.filter(post => post.title.length > 0)
+                this.filteredPosts = this.posts.filter(hasTitle)
                 break;
             case "body":
-                this.filteredPosts = this.posts.filter(post => post.body.length > 0);
+                this.filteredPosts = this.posts.filter(hasBody);
                 break
             case "noTitle":
-                this.filteredPosts = this.posts.filter(post => post.title.length === 0)
+                this.filteredPosts = this.posts.filter(post => !hasTitle(post))
                 break
             case "noBody":
-                this.filteredPosts = this.posts.filter(post => post.body.length === 0)
+                this.filteredPosts = this.posts.filter(post => !hasBody(post))
                 break
             default:
                 this.filteredPosts = [...this.posts]
