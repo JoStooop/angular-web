@@ -3,7 +3,8 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
-        "baseUrl": "./src",
+        "rootDir": ".",
+        "baseUrl": ".",
         "outDir": "./dist/out-tsc",
         "strict": true,
         "noImplicitOverride": true,
@@ -19,7 +20,9 @@
         "target": "ES2022",
         "module": "ES2022",
         "paths": {
-            "@base/*": ["apps/en/src/app/base/*"],
+            "@angular-web/assets/*": [
+                "libs/assets/src/index.ts"
+            ]
         }
     },
     "angularCompilerOptions": {
@@ -27,5 +30,10 @@
         "strictInjectionParameters": true,
         "strictInputAccessModifiers": true,
         "strictTemplates": true
-    }
+    },
+    "include": [
+        "apps/**/*.ts",
+        "apps/**/*.html",
+        "apps/**/*.scss"
+    ]
 }
