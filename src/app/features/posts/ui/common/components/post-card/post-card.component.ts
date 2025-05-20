@@ -17,8 +17,8 @@ interface PostForm {
 })
 export class PostCardComponent {
     @Input() post?: Post
-    @Output() postDeleted = new EventEmitter<number>()
-    @Output() postEdited = new EventEmitter<Post>()
+    @Output() deletePost = new EventEmitter<number>()
+    @Output() editPost = new EventEmitter<Post>()
 
     public isEditPost: boolean = false
     public editForm: PostForm = {
@@ -26,8 +26,8 @@ export class PostCardComponent {
         body: ''
     };
 
-    deletePost(id: number): void {
-        this.postDeleted.emit(id)
+    deletingPost(id: number): void {
+        this.deletePost.emit(id)
     }
 
     startEditingPost(): void {
@@ -53,7 +53,7 @@ export class PostCardComponent {
             title: this.editForm.title,
             body: this.editForm.body
         }
-        this.postEdited.emit(updatedPost)
+        this.editPost.emit(updatedPost)
 
         this.isEditPost = false
     }

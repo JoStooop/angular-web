@@ -27,7 +27,7 @@ export class PostsComponent implements OnInit {
     public isOpenFilterMenu: boolean = false
     public sortColumn: SortColumn | null = null;
 
-    public search: string = ''
+    public searchQuery: string = ''
     public posts: Post[] = []
 
     public filteredPosts: Post[] = []
@@ -52,7 +52,7 @@ export class PostsComponent implements OnInit {
         })
     }
 
-    public postDeleted(id: number): void {
+    public deletingPost(id: number): void {
         this.postsService.deletePost(id).subscribe({
             next: () => {
                 this.posts = this.posts.filter(post => post.id !== id)
@@ -61,7 +61,7 @@ export class PostsComponent implements OnInit {
         })
     }
 
-    public postEdited(post: Post): void {
+    public editingPost(post: Post): void {
         this.postsService.updatePost(post).subscribe({
             next: () => {
                 this.posts = this.posts.map(p => p.id === post.id ? post : p)
@@ -70,7 +70,7 @@ export class PostsComponent implements OnInit {
         })
     }
 
-    public createPost(): void {
+    public creatingPost(): void {
         const newPost = {
             id: this.posts.length + 1, // заглушка
             title: this.formGroup.title,
@@ -88,10 +88,10 @@ export class PostsComponent implements OnInit {
     }
 
     public searchPosts(): void {
-        this.filteredPosts = this.posts.filter(post => post.body.toLowerCase().includes(this.search.toLowerCase()))
+        this.filteredPosts = this.posts.filter(post => post.body.toLowerCase().includes(this.searchQuery.toLowerCase()))
     }
 
-    public toggleFilterMenu(): void {
+    public toggleFiltersVisibilityMenu(): void {
         this.isOpenFilterMenu = !this.isOpenFilterMenu
     }
 
@@ -99,7 +99,7 @@ export class PostsComponent implements OnInit {
         return this.sortColumn === column;
     }
 
-    public resetPostFilters(): void {
+    public resetFiltersPost(): void {
         this.sortColumn = null;
         this.filteredPosts = [...this.posts];
     }

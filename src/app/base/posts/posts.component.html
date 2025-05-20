@@ -10,11 +10,11 @@
             type="text"
             class="search-input"
             placeholder="Search"
-            [(ngModel)]="search"
+            [(ngModel)]="searchQuery"
             (ngModelChange)="searchPosts()">
     </div>
 
-    <form class="form" (submit)="createPost()">
+    <form class="form" (submit)="creatingPost()">
         <div class="form-group">
             <label class="form-label" for="title">Title:</label>
             <input class="form-input"
@@ -40,11 +40,11 @@
     </form>
 
     <div class="filter">
-        <button class="filter-toggle" (click)="toggleFilterMenu()">
+        <button class="filter-toggle" (click)="toggleFiltersVisibilityMenu()">
             {{ sortColumn ? 'Filter: ' + sortColumn : 'Filter' }}
         </button>
         @if (sortColumn) {
-            <span class="filter-reset" (click)="resetPostFilters()">Сбросить</span>
+            <span class="filter-reset" (click)="resetFiltersPost()">Сбросить</span>
         }
 
         @if (isOpenFilterMenu) {
@@ -57,15 +57,15 @@
         }
     </div>
 
-    @if (search && filteredPosts.length === 0) {
+    @if (searchQuery && filteredPosts.length === 0) {
         <div>Posts not found</div>
     } @else {
         <section>
             @for (post of filteredPosts; track post.id) {
                 <apps-post-card
                     [post]="post"
-                    (postDeleted)="postDeleted($event)"
-                    (postEdited)="postEdited($event)"
+                    (deletePost)="deletingPost($event)"
+                    (editPost)="editingPost($event)"
                 ></apps-post-card>
             }
         </section>
