@@ -3,7 +3,7 @@ import {RouterLink, RouterLinkActive} from "@angular/router";
 import {ROUTE_PATHS} from "../../../core/common/const/route-paths";
 
 @Component({
-    selector: 'apps-header',
+    selector: 'app-header',
     standalone: true,
     imports: [
         RouterLink,

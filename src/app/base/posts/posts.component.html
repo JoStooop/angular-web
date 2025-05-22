@@ -33,11 +33,11 @@
 
     <div class="search">
         <input
-                type="text"
-                class="search-input"
-                placeholder="Search"
-                [(ngModel)]="search"
-                (ngModelChange)="handleSearch()">
+            type="text"
+            class="search-input"
+            placeholder="Search"
+            [(ngModel)]="search"
+            (ngModelChange)="handleSearch()">
     </div>
 
     <div class="filter">
@@ -50,16 +50,19 @@
 
         @if (isOpenFilterMenu) {
             <ul class="filter-menu">
-                <li class="filter-item" [class.filter-item__active]="isFiltered('title')" (click)="handleFilter('title')">
+                <li class="filter-item" [class.filter-item__active]="isFiltered('title')"
+                    (click)="handleFilter('title')">
                     title
                 </li>
                 <li class="filter-item" [class.filter-item__active]="isFiltered('body')" (click)="handleFilter('body')">
                     body
                 </li>
-                <li class="filter-item" [class.filter-item__active]="isFiltered('noTitle')" (click)="handleFilter('noTitle')">
+                <li class="filter-item" [class.filter-item__active]="isFiltered('noTitle')"
+                    (click)="handleFilter('noTitle')">
                     noTitle
                 </li>
-                <li class="filter-item" [class.filter-item__active]="isFiltered('noBody')" (click)="handleFilter('noBody')">
+                <li class="filter-item" [class.filter-item__active]="isFiltered('noBody')"
+                    (click)="handleFilter('noBody')">
                     noBody
                 </li>
             </ul>
@@ -72,9 +75,9 @@
         <section>
             @for (post of filteredPosts; track post.id) {
                 <apps-post-card
-                        [post]="post"
-                        (postDeleted)="handleDelete($event)"
-                        (postEdited)="handelEditPost($event)"
+                    [post]="post"
+                    (postDeleted)="handleDelete($event)"
+                    (postEdited)="handelEditPost($event)"
                 ></apps-post-card>
             }
         </section>

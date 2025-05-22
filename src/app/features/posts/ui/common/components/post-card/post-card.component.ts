@@ -11,7 +11,7 @@ import {POST_STATES} from "../../const/post-states.const";
 export type PostState = 'empty' | 'view' | 'edit';
 
 @Component({
-    selector: 'apps-post-card',
+    selector: 'app-post-card',
     standalone: true,
     imports: [CommonModule, FormsModule, PostViewComponent, PostEditComponent],
     templateUrl: './post-card.component.html',

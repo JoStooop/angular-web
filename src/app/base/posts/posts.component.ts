@@ -10,7 +10,7 @@ import {EditPostForm} from "../../features/posts/ui/common/models/post-form.mode
 type FilterType = 'title' | 'body' | 'noTitle' | 'noBody'
 
 @Component({
-    selector: 'apps-posts',
+    selector: 'app-posts',
     standalone: true,
     imports: [
         PostCardComponent,
