@@ -7,7 +7,7 @@ import {PostCardComponent} from "../../features/posts/ui/common/components/post-
 import {LoadingStatus} from "../../core/common/models/loadingStatus.model";
 import {EditPostForm} from "../../features/posts/ui/common/models/post-form.model";
 
-type SortColumn = 'title' | 'body'
+type FilterType = 'title' | 'body' | 'noTitle' | 'noBody'
 
 @Component({
     selector: 'apps-posts',
@@ -24,7 +24,7 @@ export class PostsComponent implements OnInit {
     public postsLoadingStatus: LoadingStatus = 'idle'
 
     public isOpenFilterMenu: boolean = false
-    public sortColumn: SortColumn | null = null;
+    public filterType: FilterType | null = null;
 
     public search: string = ''
     public posts: Post[] = []
@@ -94,18 +94,38 @@ export class PostsComponent implements OnInit {
         this.isOpenFilterMenu = !this.isOpenFilterMenu
     }
 
-    public isSorted(column: SortColumn): boolean {
-        return this.sortColumn === column;
+    public isFiltered(type: FilterType): boolean {
+        return this.filterType === type;
     }
 
     handleResetFilter(): void {
-        this.sortColumn = null;
+        this.filterType = null;
         this.filteredPosts = [...this.posts];
     }
 
-    handleSort(column: SortColumn): void {
-        this.sortColumn = column;
-        this.filteredPosts = [...this.posts].sort((a, b) => a[column] > b[column] ? 1 : -1);
+    handleFilter(type: FilterType): void {
+        this.filterType = type
+
+        const hasTitle = (post: Post) => post.title.length > 0;
+        const hasBody = (post: Post) => post.body.length > 0;
+
+        switch (type) {
+            case "title":
+                this.filteredPosts = this.posts.filter(hasTitle)
+                break;
+            case "body":
+                this.filteredPosts = this.posts.filter(hasBody);
+                break
+            case "noTitle":
+                this.filteredPosts = this.posts.filter(post => !hasTitle(post))
+                break
+            case "noBody":
+                this.filteredPosts = this.posts.filter(post => !hasBody(post))
+                break
+            default:
+                this.filteredPosts = [...this.posts]
+
+        }
         this.isOpenFilterMenu = false;
     }
 }

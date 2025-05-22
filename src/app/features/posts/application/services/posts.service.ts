@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {AppConfig} from "../../../../../environments/environment.dev";
 import {Post} from "../../common/models/post.model";
 import {HttpClient, HttpParams} from "@angular/common/http";
-import {Observable, tap} from "rxjs";
+import {map, Observable, tap} from "rxjs";
 
 @Injectable({
     providedIn: 'root'
@@ -25,8 +25,15 @@ export class PostsService {
             params = params.set('_limit', limit);
         }
 
-        return this.http.get<Post[]>(`${this._apiUrl}/posts`, {params})
-    }
+        return this.http.get<Post[]>(`${this._apiUrl}/posts`, {params}).pipe(
+            map((posts: Post[]) => posts.map((post, index): Post => {
+
+                if (index % 2 === 1) post.title = ''
+                if (index % 5 === 4) post.body = ''
+
+                return post
+            }))
+        )    }
 
     addPost(newPost: Post): Observable<Post> {
         return this.http.post<Post>(`${this._apiUrl}/posts`, newPost);
