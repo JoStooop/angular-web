@@ -6,6 +6,7 @@ import {ROUTE_PATHS} from "../../core/common/const/route-paths";
 
 @Component({
     selector: 'app-error',
+    standalone: true,
     imports: [
         RouterLink
     ],
