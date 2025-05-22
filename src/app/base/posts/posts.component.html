@@ -74,11 +74,11 @@
     } @else {
         <section>
             @for (post of filteredPosts; track post.id) {
-                <apps-post-card
+                <app-post-card
                     [post]="post"
                     (postDeleted)="handleDelete($event)"
                     (postEdited)="handelEditPost($event)"
-                ></apps-post-card>
+                ></app-post-card>
             }
         </section>
     }
