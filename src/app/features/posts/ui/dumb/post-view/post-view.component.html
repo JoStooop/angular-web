@@ -1,0 +1,14 @@
+<div class="post">
+    <div class="post-content">
+        <div class="post-header">
+            <span class="post-id">{{ post.id }}</span>
+            <h3 class="post-title">{{ post.title }}</h3>
+        </div>
+        <p class="post-body">{{ post.body }}</p>
+    </div>
+
+    <div class="post-actions">
+        <button class="action-btn" (click)="deletePost.emit(post.id)">Delete</button>
+        <button class="action-btn" (click)="editPost.emit()">Edit</button>
+    </div>
+</div>

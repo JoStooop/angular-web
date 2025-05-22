@@ -1,4 +1,4 @@
-@if (isLoading) {
+@if (postsLoadingStatus === 'loading') {
     <div class="loader-posts">Loading posts...</div>
 }
 
@@ -7,14 +7,14 @@
 } @else {
     <div class="search">
         <input
-            type="text"
-            class="search-input"
-            placeholder="Search"
-            [(ngModel)]="searchQuery"
-            (ngModelChange)="searchPosts()">
+                type="text"
+                class="search-input"
+                placeholder="Search"
+                [(ngModel)]="search"
+                (ngModelChange)="handleSearch()">
     </div>
 
-    <form class="form" (submit)="creatingPost()">
+    <form class="form" (submit)="handleFormCreatePost()">
         <div class="form-group">
             <label class="form-label" for="title">Title:</label>
             <input class="form-input"
@@ -40,32 +40,31 @@
     </form>
 
     <div class="filter">
-        <button class="filter-toggle" (click)="toggleFiltersVisibilityMenu()">
+        <button class="filter-toggle" (click)="handleOpenFilterMenu()">
             {{ sortColumn ? 'Filter: ' + sortColumn : 'Filter' }}
         </button>
         @if (sortColumn) {
-            <span class="filter-reset" (click)="resetFiltersPost()">Сбросить</span>
+            <span class="filter-reset" (click)="handleResetFilter()">Сбросить</span>
         }
 
         @if (isOpenFilterMenu) {
             <ul class="filter-menu">
                 <li class="filter-item"
                     [class.filter-item__active]="isSorted('body')"
-                    (click)="sortPostsBy('body')">body
+                    (click)="handleSort('body')">body
                 </li>
             </ul>
         }
     </div>
 
-    @if (searchQuery && filteredPosts.length === 0) {
+    @if (search && filteredPosts.length === 0) {
         <div>Posts not found</div>
     } @else {
         <section>
             @for (post of filteredPosts; track post.id) {
-                <apps-post-card
-                    [post]="post"
-                    (deletePost)="deletingPost($event)"
-                    (editPost)="editingPost($event)"
+                <apps-post-card [post]="post"
+                                (postDeleted)="handleDelete($event)"
+                                (postEdited)="handelEditPost($event)"
                 ></apps-post-card>
             }
         </section>

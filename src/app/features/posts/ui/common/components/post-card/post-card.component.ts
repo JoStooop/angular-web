@@ -2,59 +2,65 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {Post} from "../../../../common/models/post.model";
 import {FormsModule} from "@angular/forms";
+import {PostViewComponent} from "../../../dumb/post-view/post-view.component";
+import {PostEditComponent} from "../../../dumb/post-edit/post-edit.component";
+import {EditPostForm} from "../../models/post-form.model";
+import {POST_STATES} from "../../const/post-states.const";
 
-interface PostForm {
-    title: string
-    body: string
-}
+// TODO: вынести type (models?). Надо подумать
+export type PostState = 'empty' | 'view' | 'edit';
 
 @Component({
     selector: 'apps-post-card',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, PostViewComponent, PostEditComponent],
     templateUrl: './post-card.component.html',
     styleUrls: ['./post-card.component.scss']
 })
 export class PostCardComponent {
-    @Input() post?: Post
-    @Output() deletePost = new EventEmitter<number>()
-    @Output() editPost = new EventEmitter<Post>()
+    @Input() post!: Post
+    @Output() postDeleted = new EventEmitter<number>()
+    @Output() postEdited = new EventEmitter<Post>()
 
-    public isEditPost: boolean = false
-    public editForm: PostForm = {
+    // TODO: буду дорабатывать состояние EMPTY
+    protected readonly POST_STATES = POST_STATES;
+
+    public currentStatePost: PostState = POST_STATES.VIEW
+
+    public editPostForm: EditPostForm = {
         title: '',
         body: ''
     };
 
-    deletingPost(id: number): void {
-        this.deletePost.emit(id)
+    onDeletePost(id: number): void {
+        this.postDeleted.emit(id)
     }
 
-    startEditingPost(): void {
+    onStartEditPost(): void {
         if (!this.post) return
 
-        this.isEditPost = true
+        this.currentStatePost = POST_STATES.EDIT
 
-        this.editForm = {
+        this.editPostForm = {
             title: this.post.title,
             body: this.post.body
         }
     }
 
-    cancelEditingPost(): void {
-        this.isEditPost = false
+    onCancelEdit(): void {
+        this.currentStatePost = POST_STATES.VIEW
     }
 
-    submitEditedPost(): void {
+    onSavePost(post: Post): void {
         if (!this.post) return
 
         const updatedPost: Post = {
-            ...this.post,
-            title: this.editForm.title,
-            body: this.editForm.body
+            ...post,
+            title: this.editPostForm.title,
+            body: this.editPostForm.body
         }
-        this.editPost.emit(updatedPost)
 
-        this.isEditPost = false
+        this.currentStatePost = POST_STATES.VIEW
+        this.postEdited.emit(updatedPost)
     }
 }

@@ -4,11 +4,8 @@ import {FormsModule} from "@angular/forms";
 import {Post} from "../../features/posts/common/models/post.model";
 import {PostsService} from "../../features/posts/application/services/posts.service";
 import {PostCardComponent} from "../../features/posts/ui/common/components/post-card/post-card.component";
-
-interface PostForm {
-    title: string
-    body: string
-}
+import {LoadingStatus} from "../../core/common/models/loadingStatus.model";
+import {EditPostForm} from "../../features/posts/ui/common/models/post-form.model";
 
 type SortColumn = 'title' | 'body'
 
@@ -23,17 +20,18 @@ type SortColumn = 'title' | 'body'
     styleUrl: './posts.component.scss'
 })
 export class PostsComponent implements OnInit {
-    public isLoading: boolean = false
+
+    public postsLoadingStatus: LoadingStatus = 'idle'
 
     public isOpenFilterMenu: boolean = false
     public sortColumn: SortColumn | null = null;
 
-    public searchQuery: string = ''
+    public search: string = ''
     public posts: Post[] = []
 
     public filteredPosts: Post[] = []
 
-    public formGroup: PostForm = {
+    public formGroup: EditPostForm = {
         title: '',
         body: ''
     }
@@ -42,36 +40,40 @@ export class PostsComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.isLoading = true
+        this.postsLoadingStatus = 'loading'
         this.postsService.loadPosts(5).subscribe({
             next: (posts) => {
                 this.posts = posts
                 this.filteredPosts = [...posts]
             },
-            error: (error) => console.log('error', error),
-            complete: () => this.isLoading = false
+            error: () => this.postsLoadingStatus = 'failed',
+            complete: () => this.postsLoadingStatus = 'succeeded'
         })
     }
 
-    public deletingPost(id: number): void {
+    public handleSearch(): void {
+        this.filteredPosts = this.posts.filter(post => post.body.toLowerCase().includes(this.search.toLowerCase()))
+    }
+
+    public handleDelete(id: number): void {
         this.postsService.deletePost(id).subscribe({
             next: () => {
                 this.posts = this.posts.filter(post => post.id !== id)
                 this.filteredPosts = this.filteredPosts.filter(post => post.id !== id)
-            }
+            },
         })
     }
 
-    public editingPost(post: Post): void {
+    public handelEditPost(post: Post): void {
         this.postsService.updatePost(post).subscribe({
             next: () => {
                 this.posts = this.posts.map(p => p.id === post.id ? post : p)
                 this.filteredPosts = this.filteredPosts.map(p => p.id === post.id ? post : p)
-            }
+            },
         })
     }
 
-    public creatingPost(): void {
+    public handleFormCreatePost(): void {
         const newPost = {
             id: this.posts.length + 1, // заглушка
             title: this.formGroup.title,
@@ -88,11 +90,7 @@ export class PostsComponent implements OnInit {
         })
     }
 
-    public searchPosts(): void {
-        this.filteredPosts = this.posts.filter(post => post.body.toLowerCase().includes(this.searchQuery.toLowerCase()))
-    }
-
-    public toggleFiltersVisibilityMenu(): void {
+    public handleOpenFilterMenu(): void {
         this.isOpenFilterMenu = !this.isOpenFilterMenu
     }
 
@@ -100,12 +98,12 @@ export class PostsComponent implements OnInit {
         return this.sortColumn === column;
     }
 
-    public resetFiltersPost(): void {
+    handleResetFilter(): void {
         this.sortColumn = null;
         this.filteredPosts = [...this.posts];
     }
 
-    public sortPostsBy(column: SortColumn): void {
+    handleSort(column: SortColumn): void {
         this.sortColumn = column;
         this.filteredPosts = [...this.posts].sort((a, b) => a[column] > b[column] ? 1 : -1);
         this.isOpenFilterMenu = false;
