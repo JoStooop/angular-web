@@ -73,8 +73,8 @@
             @for (post of filteredPosts; track post.id) {
                 <apps-post-card
                         [post]="post"
-                        (deleted)="handleDelete($event)"
-                        (edited)="handelEditPost($event)"
+                        (postDeleted)="handleDelete($event)"
+                        (postEdited)="handelEditPost($event)"
                 ></apps-post-card>
             }
         </section>
