@@ -1,7 +1,7 @@
-import {PostState} from "../components/post-card/post-card.component";
+import {PostStatus} from "../models/post-form.interface";
 
 export const POST_STATES = {
-    EMPTY: 'empty' as PostState,
-    VIEW: 'view' as PostState,
-    EDIT: 'edit' as PostState
+    EMPTY: 'empty' as PostStatus,
+    VIEW: 'view' as PostStatus,
+    EDIT: 'edit' as PostStatus
 }

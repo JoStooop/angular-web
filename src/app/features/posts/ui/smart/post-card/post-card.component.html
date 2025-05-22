@@ -1,17 +1,17 @@
-@switch (currentStatePost) {
+@switch (currentStatusPost) {
     @case (POST_STATES.EMPTY) {
         <p>Пост не загрузился</p>
     }
     @case (POST_STATES.VIEW) {
         <app-post-view [post]="post"
-                       (deletePost)="onDeletePost($event)"
+                       (deletePost)="onDeletePost(post.id)"
                        (editPost)="onStartEditPost()">
         </app-post-view>
     }
     @case (POST_STATES.EDIT) {
         <app-post-edit [post]="post"
                        [editPostForm]="editPostForm"
-                       (savePost)="onSavePost($event)"
+                       (savePost)="onSavePost()"
                        (cancelEdit)="onCancelEdit()">
         </app-post-edit>
     }

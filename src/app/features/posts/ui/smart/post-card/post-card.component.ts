@@ -1,14 +1,11 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {Post} from "../../../../common/models/post.model";
+import {Post} from "../../../common/models/post.model";
 import {FormsModule} from "@angular/forms";
-import {PostViewComponent} from "../../../dumb/post-view/post-view.component";
-import {PostEditComponent} from "../../../dumb/post-edit/post-edit.component";
-import {EditPostForm} from "../../models/post-form.model";
-import {POST_STATES} from "../../const/post-states.const";
-
-// TODO: вынести type (models?). Надо подумать
-export type PostState = 'empty' | 'view' | 'edit';
+import {PostViewComponent} from "../../dumb/post-view/post-view.component";
+import {PostEditComponent} from "../../dumb/post-edit/post-edit.component";
+import {EditPostForm, PostStatus} from "../../common/models/post-form.interface";
+import {POST_STATES} from "../../common/const/post-states.const";
 
 @Component({
     selector: 'app-post-card',
@@ -25,7 +22,7 @@ export class PostCardComponent {
     // TODO: буду дорабатывать состояние EMPTY
     protected readonly POST_STATES = POST_STATES;
 
-    public currentStatePost: PostState = POST_STATES.VIEW
+    public currentStatusPost: PostStatus = POST_STATES.VIEW
 
     public editPostForm: EditPostForm = {
         title: '',
@@ -39,7 +36,7 @@ export class PostCardComponent {
     onStartEditPost(): void {
         if (!this.post) return
 
-        this.currentStatePost = POST_STATES.EDIT
+        this.currentStatusPost = POST_STATES.EDIT
 
         this.editPostForm = {
             title: this.post.title,
@@ -48,19 +45,19 @@ export class PostCardComponent {
     }
 
     onCancelEdit(): void {
-        this.currentStatePost = POST_STATES.VIEW
+        this.currentStatusPost = POST_STATES.VIEW
     }
 
-    onSavePost(post: Post): void {
+    onSavePost(): void {
         if (!this.post) return
 
         const updatedPost: Post = {
-            ...post,
+            ...this.post,
             title: this.editPostForm.title,
             body: this.editPostForm.body
         }
 
-        this.currentStatePost = POST_STATES.VIEW
+        this.currentStatusPost = POST_STATES.VIEW
         this.postEdited.emit(updatedPost)
     }
 }

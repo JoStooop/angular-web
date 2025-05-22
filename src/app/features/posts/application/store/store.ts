@@ -1,9 +1,9 @@
 import {Post} from "../../common/models/post.model";
-import {LoadingStatus} from "../../../../core/common/models/loadingStatus.model";
+import {LoadingStatusType} from "../../../../core/common/models/loading-status.type";
 
 export interface PostsState {
     data: Post[];
-    status: LoadingStatus;
+    status: LoadingStatusType;
     error: string | null;
 }
 // TODO: планировал вынести хранение постов сюда. Еще думаю над этим

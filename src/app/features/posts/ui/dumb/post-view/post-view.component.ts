@@ -10,7 +10,7 @@ import {Post} from "../../../common/models/post.model";
 })
 export class PostViewComponent {
     @Input () post!: Post
-    @Output() deletePost = new EventEmitter<number>()
+    @Output() deletePost = new EventEmitter<void>()
     @Output() editPost = new EventEmitter<void>()
 
 }

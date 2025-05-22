@@ -1,10 +1,10 @@
 //@use "../../../../core/common/styles/mixins.scss"
 
 .search {
-    margin: 2rem 1rem;
+    width: 47rem;
 
     &-input {
-        width: 30%;
+        width: 100%;
         padding: 0.75rem;
         color: white;
         background-color: #242424;
@@ -80,7 +80,7 @@
 }
 
 .filter {
-    margin-left: 1rem;
+    width: 250px;
     display: flex;;
     position: relative;
 
@@ -152,4 +152,11 @@
     align-items: center;
     justify-content: center;
     //@include mixins.flex(row, center, center)
+}
+
+.posts-actions {
+    margin: 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 17rem;
 }
