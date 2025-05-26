@@ -1,52 +1,39 @@
 import {Injectable} from '@angular/core';
 import {AppConfig} from "../../../../../environments/environment.dev";
-import {Post} from "../../common/models/post.model";
+import {Post} from "../../common/models/post.interface";
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {map, Observable, tap} from "rxjs";
+import {ApiService} from "../../../../application/services/api.service";
+import {EditPostForm} from "../../ui/common/models/post-form.interface";
 
 @Injectable({
     providedIn: 'root'
 })
 export class PostsService {
-    _apiUrl: string = 'https://jsonplaceholder.typicode.com'
+    private _endpoint = 'posts'
 
-    // private controllerUrl: string = AppConfig.postsEndpoint;
-
-    constructor(private http: HttpClient) {
+    constructor(private api: ApiService) {
     }
 
-    // прочитал в доке Ангуляра про HttpParams
-    // пробовал через isNull, но не сработало
-    // Тут надо будет подумать как еще добавлять другие параметры
-    loadPosts(limit?: number): Observable<Post[]> {
+    getPosts(limit?: number): Observable<Post[]> {
         let params = new HttpParams();
+        if (limit != null) params = params.set('_limit', limit);
 
-        if (limit != null) {
-            params = params.set('_limit', limit);
-        }
-
-        return this.http.get<Post[]>(`${this._apiUrl}/posts`, {params}).pipe(
-            map((posts: Post[]) => posts.map((post, index): Post => {
-
-                if (index % 2 === 1) post.title = ''
-                if (index % 5 === 4) post.body = ''
-
-                return post
-            }))
-        )    }
+        return this.api.get<Post[]>(this._endpoint, params)
+    }
 
     addPost(newPost: Post): Observable<Post> {
-        return this.http.post<Post>(`${this._apiUrl}/posts`, newPost);
+        return this.api.post<Post>(this._endpoint, newPost)
     }
 
     updatePost(post: Post): Observable<Post> {
-        return this.http.patch<Post>(`${this._apiUrl}/posts/${post.id}`, {
+        return this.api.patch<Post, EditPostForm>(this._endpoint, post.id, {
             title: post.title,
             body: post.body
-        });
+        })
     }
 
     deletePost(id: number): Observable<void> {
-        return this.http.delete<void>(`${this._apiUrl}/posts/${id}`)
+        return this.api.delete<void>(this._endpoint, id)
     }
 }

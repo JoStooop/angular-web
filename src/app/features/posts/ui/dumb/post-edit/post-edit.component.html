@@ -1,18 +1,24 @@
-<div class="post">
-    <div class="post-content">
-        <div class="post-header">
+<mat-card class="card" appearance="outlined">
+    <mat-card-content class="card-content">
+        <mat-card-header>
             <span class="post-id">{{ post.id }}</span>
             <input class="post-title__edit"
                    [(ngModel)]="editPostForm.title"
                    placeholder="Enter title"/>
-        </div>
+        </mat-card-header>
         <textarea class="post-body__edit"
                   [(ngModel)]="editPostForm.body"
                   placeholder="Enter body"></textarea>
-    </div>
+    </mat-card-content>
 
-    <div class="post-actions">
-        <button class="action-btn" (click)="savePost.emit()">Save</button>
-        <button class="action-btn" (click)="cancelEdit.emit()">Cancel</button>
-    </div>
-</div>
+    <mat-card-actions class="card-actions" align="end">
+        <button mat-flat-button (click)="savePost.emit()">
+            <mat-icon fontIcon="save"></mat-icon>
+            Save
+        </button>
+        <button mat-flat-button (click)="cancelEdit.emit()">
+            <mat-icon fontIcon="cancel"></mat-icon>
+            Cancel
+        </button>
+    </mat-card-actions>
+</mat-card>

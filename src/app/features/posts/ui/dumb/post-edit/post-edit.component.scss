@@ -6,7 +6,6 @@
     background-color: #242424;
     border-radius: 8px;
     padding: 1rem;
-    margin: 1rem;
     transition: transform 0.2s ease;
 
     &:hover {
@@ -94,5 +93,28 @@
 
     &:hover {
         background-color: darken(#855ec8, 10%);
+    }
+}
+
+
+.card {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: #242424;
+    border: none;
+    max-width: 80rem;
+
+    &-content {
+        max-width: 60rem;
+        cursor: pointer;
+    }
+
+    &-actions {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 0.8rem;
     }
 }

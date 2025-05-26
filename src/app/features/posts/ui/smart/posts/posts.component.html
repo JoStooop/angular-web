@@ -1,75 +1,32 @@
 @if (postsLoadingStatus === 'loading') {
-    <div class="loader-posts">Loading posts...</div>
+    <div class="wrapper">
+        <mat-spinner color="primary" [diameter]="40"></mat-spinner>
+    </div>
 }
 
-@if (posts.length === 0) {
+@if (postsLoadingStatus === 'failed' || this.posts.length === 0) {
     <div>Posts didn't load</div>
 } @else {
-
-    <form class="form" (submit)="createPost()">
-        <div class="form-group">
-            <label class="form-label" for="title">Title:</label>
-            <input class="form-input"
-                   id="title"
-                   type="text"
-                   placeholder="Enter title"
-                   name="title"
-                   [(ngModel)]="formGroup.title"/>
-        </div>
-        <div class="form-group">
-            <label class="form-label" for="body">Body:</label>
-            <input class="form-input"
-                   id="body"
-                   type="text"
-                   placeholder="Enter body"
-                   name="body"
-                   [(ngModel)]="formGroup.body"/>
-        </div>
-        <div class="form-group">
-            <button type="submit" class="form-button" [disabled]="!formGroup.title || !formGroup.body">Create post
-            </button>
-        </div>
-    </form>
+    <app-post-form [formData]="formGroup" (onSubmit)="createPost()"></app-post-form>
 
     <div class="posts-actions">
-        <div class="filter">
-            <button class="filter-toggle" (click)="toggleFilterMenu()">
-                {{ activeFilter ? 'Filter: ' + activeFilter : 'Filter' }}
-            </button>
-            @if (activeFilter) {
-                <span class="filter-reset" (click)="resetFilters()">Сбросить</span>
-            }
+        <mat-form-field>
+            <mat-label>Filters:</mat-label>
+            <mat-select>
+                @for (filter of filters; track filter) {
+                    <mat-option [value]="filter.label" (click)="applyFilters(filter.label)">{{ filter.label }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
 
-            @if (isOpenFilterMenu) {
-                <ul class="filter-menu">
-                    <li class="filter-item" [class.filter-item__active]="applyFilter('title')"
-                        (click)="applyFilters('title')">
-                        title
-                    </li>
-                    <li class="filter-item" [class.filter-item__active]="applyFilter('body')"
-                        (click)="applyFilters('body')">
-                        body
-                    </li>
-                    <li class="filter-item" [class.filter-item__active]="applyFilter('noTitle')"
-                        (click)="applyFilters('noTitle')">
-                        noTitle
-                    </li>
-                    <li class="filter-item" [class.filter-item__active]="applyFilter('noBody')"
-                        (click)="applyFilters('noBody')">
-                        noBody
-                    </li>
-                </ul>
-            }
-        </div>
+        @if (activeFilter !== null) {
+            <button mat-flat-button (click)="resetFilters()">Reset</button>
+        }
 
-        <div class="search">
-            <input
-                type="text"
-                class="search-input"
-                placeholder="Search"
-                [(ngModel)]="searchQuery"
-                (ngModelChange)="searchPosts()">
-        </div>
+        <mat-form-field class="search" appearance="outline">
+            <mat-label>Search</mat-label>
+            <input matInput type="text" [(ngModel)]="searchQuery" (ngModelChange)="searchPosts()">
+        </mat-form-field>
     </div>
 
     @if (searchQuery && filteredPosts.length === 0) {

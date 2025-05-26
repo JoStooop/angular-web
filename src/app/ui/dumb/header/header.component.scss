@@ -1,35 +1,35 @@
-//@use "src/app/core/common/styles/mixins";
-
 .header {
-    background-color: #242424;
+    background: #242424;
     color: #855ec8;
-    padding: 15px 20px;
-}
 
-.nav-list {
-    //@include mixins.flex(row, center, center);
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    list-style: none;
-    gap: 20px;
-}
+    &-title{
+        font-weight: 600;
+        text-decoration: none;
+        color: #855ec8;
+    }
 
-.nav-link {
-    color: #855ec8;
-    text-decoration: none;
-    font-size: 1rem;
-    padding: 5px 10px;
-    transition: 0.3s ease;
+    &-nav-links{
+        margin-left: auto;
+        display: flex;
+        gap: 30px;
+    }
 
-    &:hover {
-        transform: scale(1.02);
-        text-decoration: underline;
-        color: lighten(#855ec8, 5%);
+    &-nav-link {
+        color: #855ec8;
+        text-decoration: none;
+        font-size: 1.3rem;
+        padding: 5px 10px;
+        transition: 0.3s ease;
+
+        &:hover {
+            //transform: scale(1.02);
+            text-decoration: underline;
+            //color: lighten(#855ec8, 5%);
+        }
     }
 }
 
 .active-link {
     color: lighten(#855ec8, 30%);
+    font-weight: bold;
 }

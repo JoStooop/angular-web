@@ -3,14 +3,20 @@
     <router-outlet/>
 } @else {
     @defer {
-        <div class="error-wrapper">
-            <span class="error">Все сломано :(</span>
-        </div>
+        <mat-card class="wrapper">
+            <mat-card-content>
+                <div class="error">
+                    <div class="error-content">
+                        <mat-icon class="error-icon">error</mat-icon>
+                        <p class="error-message">Все сломано :(</p>
+                    </div>
+                    <button mat-flat-button (click)="reloadPage()">Перезагрузить</button>
+                </div>
+            </mat-card-content>
+        </mat-card>
     } @loading (minimum 2000) {
-        <div class="loader-wrapper">
-            <span class="loader">Загрузка...</span>
+        <div class="wrapper">
+            <mat-spinner color="primary" [diameter]="80"></mat-spinner>
         </div>
     }
 }
-
-<!--  Просто экспериментировал с defer. СМотрел как в DBA это работало    -->

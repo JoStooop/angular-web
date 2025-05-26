@@ -7,7 +7,8 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "scss"
+          "style": "scss",
+            "skipTests": true
         }
       },
       "root": "",
@@ -17,9 +18,6 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/angular-todo",
-            "index": "src/apps/en/src/index.html",
-            "browser": "src/apps/en/src/main.ts",
             "outputPath": "dist/angular-web",
             "index": "src/index.html",
             "browser": "src/main.ts",

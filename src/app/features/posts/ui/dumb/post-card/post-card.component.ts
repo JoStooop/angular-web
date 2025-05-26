@@ -1,9 +1,9 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {Post} from "../../../common/models/post.model";
+import {Post} from "../../../common/models/post.interface";
 import {FormsModule} from "@angular/forms";
-import {PostViewComponent} from "../../dumb/post-view/post-view.component";
-import {PostEditComponent} from "../../dumb/post-edit/post-edit.component";
+import {PostViewComponent} from "../post-view/post-view.component";
+import {PostEditComponent} from "../post-edit/post-edit.component";
 import {EditPostForm, PostStatus} from "../../common/models/post-form.interface";
 import {POST_STATES} from "../../common/const/post-states.const";
 
