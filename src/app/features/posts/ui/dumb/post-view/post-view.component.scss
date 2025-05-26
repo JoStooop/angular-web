@@ -1,21 +1,60 @@
+$phone: 600px;
+$tablet: 768px;
+$desktop: 1024px;
+
 .card {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    background-color: #242424;
-    border: none;
-    max-width: 80rem;
+    transition: transform 0.2s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+    }
+
+    &-header {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+
+    &-id {
+        font-size: 1.2rem;
+    }
 
     &-content {
-        max-width: 60rem;
+        max-width: 80rem;
+        padding: 1rem 0 0 1rem;
         cursor: pointer;
     }
 
     &-actions {
+        width: 300px;
+        margin-left: auto;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         align-items: flex-end;
         gap: 0.8rem;
+    }
+}
+
+@media (max-width: $tablet) {
+    .card {
+        display: flex;
+        flex-direction: column;
+
+        &-header{
+            margin-bottom: 0.8rem;
+        }
+
+        &-actions {
+            width: 250px;
+            display: flex;
+            flex-direction: row;
+        }
     }
 }

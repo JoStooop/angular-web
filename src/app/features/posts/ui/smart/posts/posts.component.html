@@ -10,18 +10,17 @@
     <app-post-form [formData]="formGroup" (onSubmit)="createPost()"></app-post-form>
 
     <div class="posts-actions">
-        <mat-form-field>
-            <mat-label>Filters:</mat-label>
-            <mat-select>
-                @for (filter of filters; track filter) {
-                    <mat-option [value]="filter.label" (click)="applyFilters(filter.label)">{{ filter.label }}</mat-option>
-                }
-            </mat-select>
-        </mat-form-field>
+        <div class="filters-actions">
+            <app-filters
+                [filters]="filters"
+                [activeFilter]="activeFilter"
+                (filterChanged)="applyFilters($event)"
+            ></app-filters>
 
-        @if (activeFilter !== null) {
-            <button mat-flat-button (click)="resetFilters()">Reset</button>
-        }
+            @if (activeFilter !== null) {
+                <button mat-raised-button (click)="resetFilters()">Reset</button>
+            }
+        </div>
 
         <mat-form-field class="search" appearance="outline">
             <mat-label>Search</mat-label>
@@ -32,14 +31,12 @@
     @if (searchQuery && filteredPosts.length === 0) {
         <div>Posts not found</div>
     } @else {
-        <section>
-            @for (post of filteredPosts; track post.id) {
-                <app-post-card
-                    [post]="post"
-                    (postDeleted)="deletePost($event)"
-                    (postEdited)="updatePost($event)"
-                ></app-post-card>
-            }
-        </section>
+        @for (post of filteredPosts; track post.id) {
+            <app-post-card
+                [post]="post"
+                (postDeleted)="deletePost($event)"
+                (postEdited)="updatePost($event)"
+            ></app-post-card>
+        }
     }
 }

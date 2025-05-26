@@ -10,11 +10,12 @@ import {FilterType} from "../../common/models/filter-type.type";
 import {map} from "rxjs";
 import {filtersAndSearchPosts, hasBody, hasTitle} from "../../../common/utils/posts.utils";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
-import {PostFormComponent} from "../../dumb/post-form/post-form.component";
+import {PostFormComponent} from "../post-form/post-form.component";
 import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatButton} from "@angular/material/button";
+import {FiltersComponent} from "../../../../../ui/dumb/filters/filters.component";
 
 @Component({
     selector: 'app-posts',
@@ -27,7 +28,8 @@ import {MatButton} from "@angular/material/button";
         MatInputModule,
         MatFormFieldModule,
         MatSelectModule,
-        MatButton
+        MatButton,
+        FiltersComponent
     ],
     templateUrl: './posts.component.html',
     styleUrl: './posts.component.scss'

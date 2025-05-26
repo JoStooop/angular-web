@@ -1,5 +1,9 @@
 @use '@angular/material' as mat;
 
+$phone: 600px;
+$tablet: 768px;
+$desktop: 1024px;
+
 html {
     @include mat.theme((
         color: (
@@ -18,15 +22,9 @@ html {
 }
 
 html, body {
-    background-color: #181818;
-    color: white;
-}
-
-html, body {
     height: 100%;
 }
 
 body {
-    margin: 0;
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }

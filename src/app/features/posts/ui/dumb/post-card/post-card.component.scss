@@ -1,0 +1,10 @@
+$phone: 600px;
+$tablet: 768px;
+$desktop: 1024px;
+
+:host {
+    @media (max-width: $tablet) {
+        padding: 0 1.5rem;
+    }
+}
+

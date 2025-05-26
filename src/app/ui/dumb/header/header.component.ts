@@ -1,7 +1,13 @@
 import {Component} from '@angular/core';
 import {RouterLink, RouterLinkActive} from "@angular/router";
 import {ROUTE_PATHS} from "../../../core/common/const/route-paths.const";
-import {MatToolbarModule} from "@angular/material/toolbar";
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatIconModule} from '@angular/material/icon';
+import {MatSidenavModule} from "@angular/material/sidenav";
+import {MatIconButton} from "@angular/material/button";
+import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
+import {MatNavList} from "@angular/material/list";
+
 
 @Component({
     selector: 'app-header',
@@ -9,7 +15,14 @@ import {MatToolbarModule} from "@angular/material/toolbar";
     imports: [
         RouterLink,
         RouterLinkActive,
-        MatToolbarModule
+        MatToolbarModule,
+        MatIconModule,
+        MatSidenavModule,
+        MatIconButton,
+        MatMenu,
+        MatMenuItem,
+        MatMenuTrigger,
+        MatNavList,
     ],
     templateUrl: './header.component.html',
     styleUrl: './header.component.scss'

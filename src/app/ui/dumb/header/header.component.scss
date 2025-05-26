@@ -1,35 +1,50 @@
-.header {
-    background: #242424;
-    color: #855ec8;
+$phone: 600px;
+$tablet: 768px;
+$desktop: 1024px;
 
-    &-title{
-        font-weight: 600;
+.title {
+    user-select: none;
+    text-decoration: none;
+    color: var(--mat-app-text-color);
+}
+
+.toggle-burger {
+    display: none;
+}
+
+.nav {
+    display: flex;
+    gap: 1rem;
+
+    &-link {
+        color: var(--mat-app-text-color);
+        font-size: 1.2rem;
         text-decoration: none;
-        color: #855ec8;
-    }
-
-    &-nav-links{
-        margin-left: auto;
-        display: flex;
-        gap: 30px;
-    }
-
-    &-nav-link {
-        color: #855ec8;
-        text-decoration: none;
-        font-size: 1.3rem;
-        padding: 5px 10px;
-        transition: 0.3s ease;
-
-        &:hover {
-            //transform: scale(1.02);
-            text-decoration: underline;
-            //color: lighten(#855ec8, 5%);
-        }
     }
 }
 
+mat-toolbar-row {
+    display: flex;
+    justify-content: space-between;
+}
+
 .active-link {
-    color: lighten(#855ec8, 30%);
+    color: var(--mat-app-text-color);
     font-weight: bold;
+}
+
+@media (max-width: $tablet) {
+    .toggle-burger {
+        display: inline-flex;
+    }
+
+    .nav {
+        display: none;
+    }
+}
+
+@media (max-width: $phone) {
+    .toggle-burger {
+        margin-right: 1rem;
+    }
 }

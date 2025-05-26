@@ -1,11 +1,6 @@
 @use '../core/common/styles/mixins';
 
-:host {
-    //background-color: red;
-}
-
 .wrapper {
-    background-color: #181818;
     height: 100vh;
     @include mixins.flex(row, center, center)
 }
