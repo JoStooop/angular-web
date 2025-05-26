@@ -9,6 +9,7 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 
 @Component({
     selector: 'app-post-form',
+    standalone: true,
     imports: [
         FormsModule,
         MatCardModule,
