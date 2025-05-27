@@ -34,9 +34,9 @@ import {FiltersComponent} from "../../../../../ui/dumb/filters/filters.component
     styleUrl: './posts.component.scss'
 })
 export class PostsComponent implements OnInit {
-    public postsLoadingStatus: LoadingStatus = 'idle'
-    public activeFilter: FilterType | null = null;
-    public searchQuery: string = ''
+    postsLoadingStatus: LoadingStatus = 'idle'
+    activeFilter: FilterType | null = null;
+    searchQuery: string = ''
 
     public posts: Post[] = []
     public filteredPosts: Post[] = []
@@ -46,7 +46,7 @@ export class PostsComponent implements OnInit {
         body: ''
     }
 
-    public filters: { label: FilterType }[] = [
+    filters: { label: FilterType }[] = [
         {label: 'hasTitle'},
         {label: 'hasBody'},
         {label: 'noTitle'},
@@ -54,41 +54,6 @@ export class PostsComponent implements OnInit {
     ];
 
     constructor(public postsService: PostsService) {
-    }
-
-    private filterPosts(posts: Post[], filter: FilterType | null): Post[] {
-        const hasTitle = (post: Post) => post.title.length > 0;
-        const hasBody = (post: Post) => post.body.length > 0;
-
-        if (!filter) return [...posts]
-
-        switch (filter) {
-            case "hasTitle":
-                return posts.filter(hasTitle)
-            case "hasBody":
-                return posts.filter(hasBody);
-            case "noTitle":
-                return posts.filter(post => !hasTitle(post))
-            case "noBody":
-                return posts.filter(post => !hasBody(post))
-            default:
-                return [...posts]
-        }
-    }
-
-    private searchPosts(posts: Post[], query: string): Post[] {
-        if (!query) return [...posts]
-
-        return posts.filter(post => post.body.toLowerCase().includes(query.toLowerCase()))
-    }
-
-    private filtersAndSearchPosts(posts: Post[], filter: FilterType | null, query: string): Post[] {
-        let result = [...posts]
-
-        if (filter) result = this.filterPosts(result, filter)
-        if (query) result = this.searchPosts(result, query)
-
-        return result
     }
 
     ngOnInit(): void {
@@ -110,8 +75,8 @@ export class PostsComponent implements OnInit {
         })
     }
 
-    public searchPostsByBody(): void {
-        this.filteredPosts = this.filtersAndSearchPosts(this.posts, this.activeFilter, this.searchQuery)
+    searchPostsByBody(): void {
+        this.filteredPosts = this.postsService.filtersAndSearchPosts(this.posts, this.activeFilter, this.searchQuery)
     }
 
     public deletePost(id: number): void {
@@ -150,13 +115,13 @@ export class PostsComponent implements OnInit {
         })
     }
 
-    public resetFilters(): void {
+    resetFilters(): void {
         this.activeFilter = null;
-        this.filteredPosts = this.filtersAndSearchPosts(this.posts, this.activeFilter, this.searchQuery)
+        this.filteredPosts = this.postsService.filtersAndSearchPosts(this.posts, this.activeFilter, this.searchQuery)
     }
 
-    public applyFilters(type: FilterType): void {
+    applyFilters(type: FilterType): void {
         this.activeFilter = type;
-        this.filteredPosts = this.filtersAndSearchPosts(this.posts, this.activeFilter, this.searchQuery)
+        this.filteredPosts = this.postsService.filtersAndSearchPosts(this.posts, this.activeFilter, this.searchQuery)
     }
 }

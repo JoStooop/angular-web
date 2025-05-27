@@ -1,4 +1,4 @@
-export type PostCardMode = 'empty' | 'view' | 'edit';
+export type ViewEditMode =  'view' | 'edit';
 
 export interface EditPostForm {
     title: string
