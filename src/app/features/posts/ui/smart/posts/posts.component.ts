@@ -8,7 +8,6 @@ import {LoadingStatus} from "../../../../../core/common/models/loading-status.ty
 import {EditPostForm} from "../../common/models/post-form.interface";
 import {FilterType} from "../../common/models/filter-type.type";
 import {map} from "rxjs";
-import {filtersAndSearchPosts, hasBody, hasTitle} from "../../../common/utils/posts.utils";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
 import {PostFormComponent} from "../../dumb/post-form/post-form.component";
 import {MatInputModule} from "@angular/material/input";
@@ -46,13 +45,48 @@ export class PostsComponent implements OnInit {
     }
 
     public filters: { label: FilterType }[] = [
-        {label: 'title'},
-        {label: 'body'},
+        {label: 'hasTitle'},
+        {label: 'hasBody'},
         {label: 'noTitle'},
         {label: 'noBody'}
     ];
 
     constructor(public postsService: PostsService) {
+    }
+
+    private filterPosts(posts: Post[], filter: FilterType | null): Post[] {
+        const hasTitle = (post: Post) => post.title.length > 0;
+        const hasBody = (post: Post) => post.body.length > 0;
+
+        if (!filter) return [...posts]
+
+        switch (filter) {
+            case "hasTitle":
+                return posts.filter(hasTitle)
+            case "hasBody":
+                return posts.filter(hasBody);
+            case "noTitle":
+                return posts.filter(post => !hasTitle(post))
+            case "noBody":
+                return posts.filter(post => !hasBody(post))
+            default:
+                return [...posts]
+        }
+    }
+
+    private searchPosts2(posts: Post[], query: string): Post[] {
+        if (!query) return [...posts]
+
+        return posts.filter(post => post.body.toLowerCase().includes(query.toLowerCase()))
+    }
+
+    private filtersAndSearchPosts(posts: Post[], filter: FilterType | null, query: string): Post[] {
+        let result = [...posts]
+
+        if (filter) result = this.filterPosts(result, filter)
+        if (query) result = this.searchPosts2(result, query)
+
+        return result
     }
 
     ngOnInit(): void {
@@ -75,7 +109,7 @@ export class PostsComponent implements OnInit {
     }
 
     public searchPosts(): void {
-        this.filteredPosts = filtersAndSearchPosts(this.posts, this.activeFilter, this.searchQuery)
+        this.filteredPosts = this.filtersAndSearchPosts(this.posts, this.activeFilter, this.searchQuery)
     }
 
     public deletePost(id: number): void {
@@ -116,11 +150,11 @@ export class PostsComponent implements OnInit {
 
     public resetFilters(): void {
         this.activeFilter = null;
-        this.filteredPosts = filtersAndSearchPosts(this.posts, this.activeFilter, this.searchQuery)
+        this.filteredPosts = this.filtersAndSearchPosts(this.posts, this.activeFilter, this.searchQuery)
     }
 
     public applyFilters(type: FilterType): void {
         this.activeFilter = type;
-        this.filteredPosts = filtersAndSearchPosts(this.posts, this.activeFilter, this.searchQuery)
+        this.filteredPosts = this.filtersAndSearchPosts(this.posts, this.activeFilter, this.searchQuery)
     }
 }

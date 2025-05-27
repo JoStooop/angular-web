@@ -4,7 +4,7 @@
     </div>
 }
 
-@if (postsLoadingStatus === 'failed' || this.posts.length === 0) {
+@if (postsLoadingStatus === 'failed' || posts.length === 0) {
     <div>Posts didn't load</div>
 } @else {
     <app-post-form [formData]="formGroup" (onSubmit)="createPost()"></app-post-form>
@@ -13,7 +13,7 @@
         <mat-form-field>
             <mat-label>Filters:</mat-label>
             <mat-select>
-                @for (filter of filters; track filter) {
+                @for (filter of filters; track filter.label) {
                     <mat-option [value]="filter.label" (click)="applyFilters(filter.label)">{{ filter.label }}</mat-option>
                 }
             </mat-select>
