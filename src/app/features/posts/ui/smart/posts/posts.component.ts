@@ -74,7 +74,7 @@ export class PostsComponent implements OnInit {
         }
     }
 
-    private searchPosts2(posts: Post[], query: string): Post[] {
+    private searchPosts(posts: Post[], query: string): Post[] {
         if (!query) return [...posts]
 
         return posts.filter(post => post.body.toLowerCase().includes(query.toLowerCase()))
@@ -84,7 +84,7 @@ export class PostsComponent implements OnInit {
         let result = [...posts]
 
         if (filter) result = this.filterPosts(result, filter)
-        if (query) result = this.searchPosts2(result, query)
+        if (query) result = this.searchPosts(result, query)
 
         return result
     }
@@ -108,7 +108,7 @@ export class PostsComponent implements OnInit {
         })
     }
 
-    public searchPosts(): void {
+    public searchPostsByBody(): void {
         this.filteredPosts = this.filtersAndSearchPosts(this.posts, this.activeFilter, this.searchQuery)
     }
 
