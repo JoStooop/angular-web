@@ -1,14 +1,20 @@
-<div class="post">
-    <div class="post-content">
-        <div class="post-header">
-            <span class="post-id">{{ post.id }}</span>
-            <h3 class="post-title">{{ post.title }}</h3>
+<mat-card class="card" appearance="outlined">
+    <div class="card-content">
+        <div class="card-header">
+            <span class="card-id">{{ post.id }}</span>
+            <mat-card-title>{{ post.title | truncate:80}}</mat-card-title>
         </div>
-        <p class="post-body">{{ post.body }}</p>
+        <mat-card-subtitle>{{ post.body | truncate:150}}</mat-card-subtitle>
     </div>
 
-    <div class="post-actions">
-        <button class="action-btn" (click)="deletePost.emit()">Delete</button>
-        <button class="action-btn" (click)="editPost.emit()">Edit</button>
-    </div>
-</div>
+    <mat-card-actions class="card-actions" align="end">
+        <button mat-raised-button (click)="deletePost.emit()">
+            <mat-icon>delete</mat-icon>
+            Delete
+        </button>
+        <button mat-raised-button (click)="editPost.emit()">
+            <mat-icon>edit</mat-icon>
+            Edit
+        </button>
+    </mat-card-actions>
+</mat-card>

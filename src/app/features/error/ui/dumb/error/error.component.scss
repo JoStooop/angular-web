@@ -1,26 +1,13 @@
-.error-page {
+.card {
     height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 15px;
-}
 
-
-.action-btn {
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    color: white;
-    background-color: darken(#855ec8, 20%);
-    border: none;
-    border-radius: 4px;
-    display: flex;
-    align-items: flex-end;
-    transition: all 0.2s ease;
-    cursor: pointer;
-
-    &:hover {
-        background-color: darken(#855ec8, 10%);
+    &-content{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 }

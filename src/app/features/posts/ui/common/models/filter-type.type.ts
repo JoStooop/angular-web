@@ -1,1 +1,1 @@
-export type FilterType = 'title' | 'body' | 'noTitle' | 'noBody'
+export type FilterType = 'hasTitle' | 'hasBody' | 'noTitle' | 'noBody'

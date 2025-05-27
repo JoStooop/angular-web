@@ -1,12 +1,20 @@
 import {Component} from '@angular/core';
 import {OnInit} from '@angular/core';
 import {FormsModule} from "@angular/forms";
-import {Post} from "../../../common/models/post.model";
+import {Post} from "../../../common/models/post.interface";
 import {PostsService} from "../../../application/services/posts.service";
-import {PostCardComponent} from "../post-card/post-card.component";
+import {PostCardComponent} from "../../dumb/post-card/post-card.component";
 import {LoadingStatus} from "../../../../../core/common/models/loading-status.type";
 import {EditPostForm} from "../../common/models/post-form.interface";
 import {FilterType} from "../../common/models/filter-type.type";
+import {map} from "rxjs";
+import {MatProgressSpinner} from "@angular/material/progress-spinner";
+import {PostFormComponent} from "../post-form/post-form.component";
+import {MatInputModule} from "@angular/material/input";
+import {MatSelectModule} from "@angular/material/select";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatButton} from "@angular/material/button";
+import {FiltersComponent} from "../../../../../ui/dumb/filters/filters.component";
 
 @Component({
     selector: 'app-posts',
@@ -14,15 +22,21 @@ import {FilterType} from "../../common/models/filter-type.type";
     imports: [
         PostCardComponent,
         FormsModule,
+        MatProgressSpinner,
+        PostFormComponent,
+        MatInputModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatButton,
+        FiltersComponent
     ],
     templateUrl: './posts.component.html',
     styleUrl: './posts.component.scss'
 })
 export class PostsComponent implements OnInit {
-    public postsLoadingStatus: LoadingStatus = 'idle'
-    public isOpenFilterMenu: boolean = false
-    public activeFilter: FilterType | null = null;
-    public searchQuery: string = ''
+    postsLoadingStatus: LoadingStatus = 'idle'
+    activeFilter: FilterType | null = null;
+    searchQuery: string = ''
 
     public posts: Post[] = []
     public filteredPosts: Post[] = []
@@ -32,12 +46,26 @@ export class PostsComponent implements OnInit {
         body: ''
     }
 
+    filters: { label: FilterType }[] = [
+        {label: 'hasTitle'},
+        {label: 'hasBody'},
+        {label: 'noTitle'},
+        {label: 'noBody'}
+    ];
+
     constructor(public postsService: PostsService) {
     }
 
     ngOnInit(): void {
         this.postsLoadingStatus = 'loading'
-        this.postsService.loadPosts(20).subscribe({
+        this.postsService.getPosts(20).pipe(
+            map((posts: Post[]) => posts.map((post, index): Post => {
+                if (index % 2 === 1) post.title = ''
+                if (index % 5 === 4) post.body = ''
+
+                return post
+            }))
+        ).subscribe({
             next: (posts) => {
                 this.posts = posts
                 this.filteredPosts = [...posts]
@@ -47,8 +75,8 @@ export class PostsComponent implements OnInit {
         })
     }
 
-    public searchPosts(): void {
-        this.filteredPosts = this.posts.filter(post => post.body.toLowerCase().includes(this.searchQuery.toLowerCase()))
+    searchPostsByBody(): void {
+        this.filteredPosts = this.postsService.filtersAndSearchPosts(this.posts, this.activeFilter, this.searchQuery)
     }
 
     public deletePost(id: number): void {
@@ -70,8 +98,9 @@ export class PostsComponent implements OnInit {
     }
 
     public createPost(): void {
+        console.log('crPost', this.formGroup)
         const newPost = {
-            id: this.posts.length + 1, // заглушка
+            id: this.posts.length + 1,
             title: this.formGroup.title,
             body: this.formGroup.body,
             userId: 1
@@ -86,42 +115,13 @@ export class PostsComponent implements OnInit {
         })
     }
 
-    public toggleFilterMenu(): void {
-        this.isOpenFilterMenu = !this.isOpenFilterMenu
-    }
-
-    public applyFilter(filter: FilterType): boolean {
-        return this.activeFilter === filter;
-    }
-
     resetFilters(): void {
         this.activeFilter = null;
-        this.filteredPosts = [...this.posts];
+        this.filteredPosts = this.postsService.filtersAndSearchPosts(this.posts, this.activeFilter, this.searchQuery)
     }
 
     applyFilters(type: FilterType): void {
-        this.activeFilter = type
-
-        const hasTitle = (post: Post) => post.title.length > 0;
-        const hasBody = (post: Post) => post.body.length > 0;
-
-        switch (type) {
-            case "title":
-                this.filteredPosts = this.posts.filter(hasTitle)
-                break;
-            case "body":
-                this.filteredPosts = this.posts.filter(hasBody);
-                break
-            case "noTitle":
-                this.filteredPosts = this.posts.filter(post => !hasTitle(post))
-                break
-            case "noBody":
-                this.filteredPosts = this.posts.filter(post => !hasBody(post))
-                break
-            default:
-                this.filteredPosts = [...this.posts]
-
-        }
-        this.isOpenFilterMenu = false;
+        this.activeFilter = type;
+        this.filteredPosts = this.postsService.filtersAndSearchPosts(this.posts, this.activeFilter, this.searchQuery)
     }
 }

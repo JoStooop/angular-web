@@ -1,0 +1,9 @@
+@use '../../../../../core/common/styles/mixins';
+
+:host {
+
+    @include mixins.max-medium {
+        padding: 0 1.5rem;
+    }
+}
+

@@ -1,7 +1,6 @@
-import {PostStatus} from "../models/post-form.interface";
+import {ViewEditMode} from "../models/post-form.interface";
 
-export const POST_STATES = {
-    EMPTY: 'empty' as PostStatus,
-    VIEW: 'view' as PostStatus,
-    EDIT: 'edit' as PostStatus
+export const POST_CARD_MODES = {
+    VIEW: 'view' as ViewEditMode,
+    EDIT: 'edit' as ViewEditMode
 }

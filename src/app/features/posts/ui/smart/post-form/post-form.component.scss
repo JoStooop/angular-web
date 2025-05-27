@@ -1,0 +1,29 @@
+@use '../../../../../core/common/styles/mixins';
+
+:host {
+    width: 100%;
+    @include mixins.flex(row, flex-start, center);
+
+    @include mixins.max-medium {
+        display: flex;
+        justify-content: center;
+    }
+}
+
+.card {
+    width: 450px;
+}
+
+.form {
+    @include mixins.flex(column, flex-start, center);
+    gap: 2rem;
+
+
+    &-field {
+        width: 100%;
+    }
+
+    &-button {
+        width: 30%;
+    }
+}
