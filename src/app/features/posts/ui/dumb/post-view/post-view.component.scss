@@ -1,6 +1,4 @@
-$phone: 600px;
-$tablet: 768px;
-$desktop: 1024px;
+@use '../../../../../core/common/styles/mixins';
 
 .card {
     display: flex;
@@ -12,10 +10,7 @@ $desktop: 1024px;
     }
 
     &-header {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: center;
+        @include mixins.flex(row, flex-start, center);
         gap: 1rem;
         margin-bottom: 1rem;
     }
@@ -34,20 +29,17 @@ $desktop: 1024px;
     &-actions {
         width: 300px;
         margin-left: auto;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: flex-end;
+        @include mixins.flex(column, space-between, flex-end);
         gap: 0.8rem;
     }
 }
 
-@media (max-width: $tablet) {
+@include mixins.max-medium {
     .card {
         display: flex;
         flex-direction: column;
 
-        &-header{
+        &-header {
             margin-bottom: 0.8rem;
         }
 

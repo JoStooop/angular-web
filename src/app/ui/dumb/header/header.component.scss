@@ -1,6 +1,4 @@
-$phone: 600px;
-$tablet: 768px;
-$desktop: 1024px;
+@use '../../../core/common/styles/mixins';
 
 .title {
     user-select: none;
@@ -23,7 +21,7 @@ $desktop: 1024px;
     }
 }
 
-mat-toolbar-row {
+.toolbar-row {
     display: flex;
     justify-content: space-between;
 }
@@ -33,7 +31,7 @@ mat-toolbar-row {
     font-weight: bold;
 }
 
-@media (max-width: $tablet) {
+@include mixins.max-medium {
     .toggle-burger {
         display: inline-flex;
     }
@@ -43,7 +41,7 @@ mat-toolbar-row {
     }
 }
 
-@media (max-width: $phone) {
+@include mixins.max-small {
     .toggle-burger {
         margin-right: 1rem;
     }

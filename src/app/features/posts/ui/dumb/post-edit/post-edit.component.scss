@@ -1,7 +1,4 @@
-$phone: 600px;
-$tablet: 768px;
-$desktop: 1024px;
-
+@use '../../../../../core/common/styles/mixins';
 
 .card {
     display: flex;
@@ -14,10 +11,7 @@ $desktop: 1024px;
 
     &-actions {
         margin-left: auto;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: flex-end;
+        @include mixins.flex(column, space-between, flex-end);
         gap: 0.8rem;
         padding: 1rem 1rem 1rem 0;
     }
@@ -32,7 +26,7 @@ $desktop: 1024px;
     width: 100%;
 }
 
-@media (max-width: $tablet) {
+@include mixins.max-medium {
     .card {
 
         &-content {
@@ -41,7 +35,7 @@ $desktop: 1024px;
     }
 }
 
-@media (max-width: $phone) {
+@include mixins.max-small {
     .card {
 
         &-content {
