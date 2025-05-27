@@ -4,7 +4,7 @@ import {Post} from "../../../common/models/post.interface";
 import {FormsModule} from "@angular/forms";
 import {PostViewComponent} from "../post-view/post-view.component";
 import {PostEditComponent} from "../post-edit/post-edit.component";
-import {EditPostForm, PostCardMode} from "../../common/models/post-form.interface";
+import {EditPostForm, ViewEditMode} from "../../common/models/post-form.interface";
 import {POST_CARD_MODES} from "../../common/const/post-states.const";
 
 @Component({
@@ -19,24 +19,23 @@ export class PostCardComponent {
     @Output() postDeleted = new EventEmitter<number>()
     @Output() postEdited = new EventEmitter<Post>()
 
-    // TODO: буду дорабатывать состояние EMPTY
-    protected readonly POST_STATES = POST_CARD_MODES;
+    protected readonly POST_CARD_MODES = POST_CARD_MODES;
 
-    public currentStatusPost: PostCardMode = POST_CARD_MODES.VIEW
+    currentPostViewMode: ViewEditMode = POST_CARD_MODES.VIEW
 
-    public editPostForm: EditPostForm = {
+    protected editPostForm: EditPostForm = {
         title: '',
         body: ''
     };
 
-    onDeletePost(id: number): void {
+    protected onDeletePost(id: number): void {
         this.postDeleted.emit(id)
     }
 
-    onStartEditPost(): void {
+    protected onStartEditPost(): void {
         if (!this.post) return
 
-        this.currentStatusPost = POST_CARD_MODES.EDIT
+        this.currentPostViewMode = POST_CARD_MODES.EDIT
 
         this.editPostForm = {
             title: this.post.title,
@@ -44,11 +43,11 @@ export class PostCardComponent {
         }
     }
 
-    onCancelEdit(): void {
-        this.currentStatusPost = POST_CARD_MODES.VIEW
+    protected onCancelEdit(): void {
+        this.currentPostViewMode = POST_CARD_MODES.VIEW
     }
 
-    onSavePost(): void {
+    protected onSavePost(): void {
         if (!this.post) return
 
         const updatedPost: Post = {
@@ -57,7 +56,7 @@ export class PostCardComponent {
             body: this.editPostForm.body
         }
 
-        this.currentStatusPost = POST_CARD_MODES.VIEW
+        this.currentPostViewMode = POST_CARD_MODES.VIEW
         this.postEdited.emit(updatedPost)
     }
 }

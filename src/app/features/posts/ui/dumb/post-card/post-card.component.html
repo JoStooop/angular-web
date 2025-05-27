@@ -1,14 +1,11 @@
-@switch (currentStatusPost) {
-    @case (POST_STATES.EMPTY) {
-        <p>Пост не загрузился</p>
-    }
-    @case (POST_STATES.VIEW) {
+@switch (currentPostViewMode) {
+    @case (POST_CARD_MODES.VIEW) {
         <app-post-view [post]="post"
                        (deletePost)="onDeletePost(post.id)"
                        (editPost)="onStartEditPost()">
         </app-post-view>
     }
-    @case (POST_STATES.EDIT) {
+    @case (POST_CARD_MODES.EDIT) {
         <app-post-edit [post]="post"
                        [editPostForm]="editPostForm"
                        (savePost)="onSavePost()"
