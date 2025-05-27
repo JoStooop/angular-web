@@ -4,8 +4,8 @@ import {Post} from "../../../common/models/post.interface";
 import {FormsModule} from "@angular/forms";
 import {PostViewComponent} from "../post-view/post-view.component";
 import {PostEditComponent} from "../post-edit/post-edit.component";
-import {EditPostForm, PostStatus} from "../../common/models/post-form.interface";
-import {POST_STATES} from "../../common/const/post-states.const";
+import {EditPostForm, PostCardMode} from "../../common/models/post-form.interface";
+import {POST_CARD_MODES} from "../../common/const/post-states.const";
 
 @Component({
     selector: 'app-post-card',
@@ -20,9 +20,9 @@ export class PostCardComponent {
     @Output() postEdited = new EventEmitter<Post>()
 
     // TODO: буду дорабатывать состояние EMPTY
-    protected readonly POST_STATES = POST_STATES;
+    protected readonly POST_STATES = POST_CARD_MODES;
 
-    public currentStatusPost: PostStatus = POST_STATES.VIEW
+    public currentStatusPost: PostCardMode = POST_CARD_MODES.VIEW
 
     public editPostForm: EditPostForm = {
         title: '',
@@ -36,7 +36,7 @@ export class PostCardComponent {
     onStartEditPost(): void {
         if (!this.post) return
 
-        this.currentStatusPost = POST_STATES.EDIT
+        this.currentStatusPost = POST_CARD_MODES.EDIT
 
         this.editPostForm = {
             title: this.post.title,
@@ -45,7 +45,7 @@ export class PostCardComponent {
     }
 
     onCancelEdit(): void {
-        this.currentStatusPost = POST_STATES.VIEW
+        this.currentStatusPost = POST_CARD_MODES.VIEW
     }
 
     onSavePost(): void {
@@ -57,7 +57,7 @@ export class PostCardComponent {
             body: this.editPostForm.body
         }
 
-        this.currentStatusPost = POST_STATES.VIEW
+        this.currentStatusPost = POST_CARD_MODES.VIEW
         this.postEdited.emit(updatedPost)
     }
 }

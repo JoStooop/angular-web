@@ -4,7 +4,7 @@
     </div>
 }
 
-@if (postsLoadingStatus === 'failed' || this.posts.length === 0) {
+@if (postsLoadingStatus === 'failed' || posts.length === 0) {
     <div>Posts didn't load</div>
 } @else {
     <app-post-form [formData]="formGroup" (onSubmit)="createPost()"></app-post-form>
@@ -24,7 +24,7 @@
 
         <mat-form-field class="search" appearance="outline">
             <mat-label>Search</mat-label>
-            <input matInput type="text" [(ngModel)]="searchQuery" (ngModelChange)="searchPosts()">
+            <input matInput type="text" [(ngModel)]="searchQuery" (ngModelChange)="searchPostsByBody()">
         </mat-form-field>
     </div>
 
