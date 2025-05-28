@@ -1,21 +1,21 @@
-@if (postsLoadingStatus === 'loading') {
+@if (isPostsLoading === 'loading') {
     <div class="wrapper">
         <mat-spinner color="primary" [diameter]="40"></mat-spinner>
     </div>
 }
 
-@if (postsLoadingStatus === 'failed' || posts.length === 0) {
+@if (isPostsLoading === 'failed' || posts.length === 0) {
     <div>Posts didn't load</div>
 } @else {
     <app-post-form [formData]="formGroup" (onSubmit)="createPost()"></app-post-form>
 
     <div class="posts-actions">
         <div class="filters-actions">
-            <app-filters
-                [filters]="filters"
+            <app-filter-option
+                [filterOptions]="filterOptions"
                 [activeFilter]="activeFilter"
                 (filterChanged)="applyFilters($event)"
-            ></app-filters>
+            ></app-filter-option>
 
             @if (activeFilter !== null) {
                 <button mat-raised-button (click)="resetFilters()">Reset</button>

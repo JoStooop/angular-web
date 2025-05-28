@@ -1,4 +1,4 @@
-@switch (currentPostViewMode) {
+@switch (isPostViewMode) {
     @case (POST_CARD_MODES.VIEW) {
         <app-post-view [post]="post"
                        (deletePost)="onDeletePost(post.id)"
@@ -7,10 +7,9 @@
     }
     @case (POST_CARD_MODES.EDIT) {
         <app-post-edit [post]="post"
-                       [editPostForm]="editPostForm"
+                       [newPostForm]="newPostForm"
                        (savePost)="onSavePost()"
                        (cancelEdit)="onCancelEdit()">
         </app-post-edit>
     }
-
 }

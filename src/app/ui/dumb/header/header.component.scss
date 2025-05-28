@@ -1,4 +1,4 @@
-@use '../../../core/common/styles/mixins';
+@use '../../../../assets/styles/mixins/mixins-screen';
 
 .title {
     user-select: none;
@@ -31,7 +31,7 @@
     font-weight: bold;
 }
 
-@include mixins.max-medium {
+@include mixins-screen.max-medium {
     .toggle-burger {
         display: inline-flex;
     }
@@ -41,7 +41,7 @@
     }
 }
 
-@include mixins.max-small {
+@include mixins-screen.max-small {
     .toggle-burger {
         margin-right: 1rem;
     }

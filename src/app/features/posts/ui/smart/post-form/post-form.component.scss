@@ -1,10 +1,11 @@
-@use '../../../../../core/common/styles/mixins';
+@use '../../../../../../assets/styles/mixins/mixins-flex';
+@use '../../../../../../assets/styles/mixins/mixins-screen';
 
 :host {
     width: 100%;
-    @include mixins.flex(row, flex-start, center);
+    @include mixins-flex.flex(row, flex-start, center);
 
-    @include mixins.max-medium {
+    @include mixins-screen.max-medium {
         display: flex;
         justify-content: center;
     }
@@ -15,7 +16,7 @@
 }
 
 .form {
-    @include mixins.flex(column, flex-start, center);
+    @include mixins-flex.flex(column, flex-start, center);
     gap: 2rem;
 
 

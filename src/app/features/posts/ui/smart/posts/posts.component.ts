@@ -1,20 +1,20 @@
 import {Component} from '@angular/core';
 import {OnInit} from '@angular/core';
 import {FormsModule} from "@angular/forms";
-import {Post} from "../../../common/models/post.interface";
-import {PostsService} from "../../../application/services/posts.service";
-import {PostCardComponent} from "../../dumb/post-card/post-card.component";
-import {LoadingStatus} from "../../../../../core/common/models/loading-status.type";
-import {EditPostForm} from "../../common/models/post-form.interface";
-import {FilterType} from "../../common/models/filter-type.type";
 import {map} from "rxjs";
-import {MatProgressSpinner} from "@angular/material/progress-spinner";
-import {PostFormComponent} from "../post-form/post-form.component";
 import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
-import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatProgressSpinner} from "@angular/material/progress-spinner";
 import {MatButton} from "@angular/material/button";
-import {FiltersComponent} from "../../../../../ui/dumb/filters/filters.component";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {AppPost} from "../../../application/common/models/post.interface";
+import {PostsUseCaseService} from "../../../application/services/posts-use-case.service";
+import {LoadingStatus} from "../../../../../application/common/models/loading-status.type";
+import {AppNewPostForm} from "../../../application/common/models/post-form.interface";
+import {AppFilterSelection, FilterOption} from "../../../../../core/common/models/filter-option.model";
+import {PostCardComponent} from "../../dumb/post-card/post-card.component";
+import {PostFormComponent} from "../post-form/post-form.component";
+import {FilterOptionComponent} from "../../../../../ui/dumb/filter-option/filter-option.component";
 
 @Component({
     selector: 'app-posts',
@@ -28,38 +28,70 @@ import {FiltersComponent} from "../../../../../ui/dumb/filters/filters.component
         MatFormFieldModule,
         MatSelectModule,
         MatButton,
-        FiltersComponent
+        FilterOptionComponent
     ],
     templateUrl: './posts.component.html',
     styleUrl: './posts.component.scss'
 })
 export class PostsComponent implements OnInit {
-    postsLoadingStatus: LoadingStatus = 'idle'
-    activeFilter: FilterType | null = null;
+    isPostsLoading: LoadingStatus = 'idle'
+    activeFilter: FilterOption | null = null;
     searchQuery: string = ''
 
-    public posts: Post[] = []
-    public filteredPosts: Post[] = []
+    posts: AppPost[] = []
+    filteredPosts: AppPost[] = []
 
-    public formGroup: EditPostForm = {
-        title: '',
-        body: ''
-    }
+    formGroup: AppNewPostForm = {title: '', body: ''}
 
-    filters: { label: FilterType }[] = [
+    filterOptions: AppFilterSelection[] = [
         {label: 'hasTitle'},
         {label: 'hasBody'},
         {label: 'noTitle'},
         {label: 'noBody'}
     ];
 
-    constructor(public postsService: PostsService) {
+    constructor(public postsService: PostsUseCaseService) {
+    }
+
+    private applyFilterToPosts(posts: AppPost[], filter: FilterOption | null): AppPost[] {
+        const hasTitle = (post: AppPost) => post.title.length > 0;
+        const hasBody = (post: AppPost) => post.body.length > 0;
+
+        if (!filter) return [...posts]
+
+        switch (filter) {
+            case "hasTitle":
+                return posts.filter(hasTitle)
+            case "hasBody":
+                return posts.filter(hasBody);
+            case "noTitle":
+                return posts.filter(post => !hasTitle(post))
+            case "noBody":
+                return posts.filter(post => !hasBody(post))
+            default:
+                return [...posts]
+        }
+    }
+
+    private searchPostsByQuery(posts: AppPost[], query: string): AppPost[] {
+        if (!query) return [...posts]
+
+        return posts.filter(post => post.body.toLowerCase().includes(query.toLowerCase()))
+    }
+
+    private applyFiltersAndSearch(posts: AppPost[], filter: FilterOption | null, query: string): AppPost[] {
+        let result = [...posts]
+
+        if (filter) result = this.applyFilterToPosts(result, filter)
+        if (query) result = this.searchPostsByQuery(result, query)
+
+        return result
     }
 
     ngOnInit(): void {
-        this.postsLoadingStatus = 'loading'
+        this.isPostsLoading = 'loading'
         this.postsService.getPosts(20).pipe(
-            map((posts: Post[]) => posts.map((post, index): Post => {
+            map((posts: AppPost[]) => posts.map((post, index): AppPost => {
                 if (index % 2 === 1) post.title = ''
                 if (index % 5 === 4) post.body = ''
 
@@ -70,16 +102,16 @@ export class PostsComponent implements OnInit {
                 this.posts = posts
                 this.filteredPosts = [...posts]
             },
-            error: () => this.postsLoadingStatus = 'failed',
-            complete: () => this.postsLoadingStatus = 'succeeded'
+            error: () => this.isPostsLoading = 'failed',
+            complete: () => this.isPostsLoading = 'succeeded'
         })
     }
 
     searchPostsByBody(): void {
-        this.filteredPosts = this.postsService.filtersAndSearchPosts(this.posts, this.activeFilter, this.searchQuery)
+        this.filteredPosts = this.applyFiltersAndSearch(this.posts, this.activeFilter, this.searchQuery)
     }
 
-    public deletePost(id: number): void {
+    deletePost(id: number): void {
         this.postsService.deletePost(id).subscribe({
             next: () => {
                 this.posts = this.posts.filter(post => post.id !== id)
@@ -88,7 +120,7 @@ export class PostsComponent implements OnInit {
         })
     }
 
-    public updatePost(post: Post): void {
+    updatePost(post: AppPost): void {
         this.postsService.updatePost(post).subscribe({
             next: () => {
                 this.posts = this.posts.map(p => p.id === post.id ? post : p)
@@ -97,7 +129,7 @@ export class PostsComponent implements OnInit {
         })
     }
 
-    public createPost(): void {
+    createPost(): void {
         console.log('crPost', this.formGroup)
         const newPost = {
             id: this.posts.length + 1,
@@ -117,11 +149,11 @@ export class PostsComponent implements OnInit {
 
     resetFilters(): void {
         this.activeFilter = null;
-        this.filteredPosts = this.postsService.filtersAndSearchPosts(this.posts, this.activeFilter, this.searchQuery)
+        this.filteredPosts = this.applyFiltersAndSearch(this.posts, this.activeFilter, this.searchQuery)
     }
 
-    applyFilters(type: FilterType): void {
+    applyFilters(type: FilterOption): void {
         this.activeFilter = type;
-        this.filteredPosts = this.postsService.filtersAndSearchPosts(this.posts, this.activeFilter, this.searchQuery)
+        this.filteredPosts = this.applyFiltersAndSearch(this.posts, this.activeFilter, this.searchQuery)
     }
 }

@@ -1,7 +1,7 @@
 <mat-form-field appearance="outline">
     <mat-label>Filters:</mat-label>
     <mat-select [(value)]="activeFilter">
-        @for (filter of filters; track filter) {
+        @for (filter of filterOptions; track filter) {
             <mat-option [value]="filter.label" (click)="filterChanged.emit(filter.label)">{{ filter.label }}
             </mat-option>
         }

@@ -1,4 +1,4 @@
-export interface Post {
+export interface AppPost {
     userId: number;
     id: number;
     title: string;

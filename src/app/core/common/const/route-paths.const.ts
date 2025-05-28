@@ -1,4 +1,4 @@
-export const ROUTE_PATHS = {
+export const CORE_ROUTE_PATHS = {
     HOME: {
         PATH: '',
         TITLE: 'Home'

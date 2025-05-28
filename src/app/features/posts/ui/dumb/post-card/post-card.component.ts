@@ -1,10 +1,10 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {Post} from "../../../common/models/post.interface";
+import {AppPost} from "../../../application/common/models/post.interface";
 import {FormsModule} from "@angular/forms";
 import {PostViewComponent} from "../post-view/post-view.component";
 import {PostEditComponent} from "../post-edit/post-edit.component";
-import {EditPostForm, ViewEditMode} from "../../common/models/post-form.interface";
+import {AppNewPostForm, ViewEditMode} from "../../../application/common/models/post-form.interface";
 import {POST_CARD_MODES} from "../../common/const/post-states.const";
 
 @Component({
@@ -15,48 +15,44 @@ import {POST_CARD_MODES} from "../../common/const/post-states.const";
     styleUrls: ['./post-card.component.scss']
 })
 export class PostCardComponent {
-    @Input() post!: Post
+    @Input() post!: AppPost
     @Output() postDeleted = new EventEmitter<number>()
-    @Output() postEdited = new EventEmitter<Post>()
+    @Output() postEdited = new EventEmitter<AppPost>()
 
-    protected readonly POST_CARD_MODES = POST_CARD_MODES;
+    readonly POST_CARD_MODES = POST_CARD_MODES;
 
-    currentPostViewMode: ViewEditMode = POST_CARD_MODES.VIEW
+    isPostViewMode: ViewEditMode = POST_CARD_MODES.VIEW
+    newPostForm: AppNewPostForm = {title: '', body: ''};
 
-    protected editPostForm: EditPostForm = {
-        title: '',
-        body: ''
-    };
-
-    protected onDeletePost(id: number): void {
+    onDeletePost(id: number): void {
         this.postDeleted.emit(id)
     }
 
-    protected onStartEditPost(): void {
+    onStartEditPost(): void {
         if (!this.post) return
 
-        this.currentPostViewMode = POST_CARD_MODES.EDIT
+        this.isPostViewMode = POST_CARD_MODES.EDIT
 
-        this.editPostForm = {
+        this.newPostForm = {
             title: this.post.title,
             body: this.post.body
         }
     }
 
-    protected onCancelEdit(): void {
-        this.currentPostViewMode = POST_CARD_MODES.VIEW
+    onCancelEdit(): void {
+        this.isPostViewMode = POST_CARD_MODES.VIEW
     }
 
-    protected onSavePost(): void {
+    onSavePost(): void {
         if (!this.post) return
 
-        const updatedPost: Post = {
+        const updatedPost: AppPost = {
             ...this.post,
-            title: this.editPostForm.title,
-            body: this.editPostForm.body
+            title: this.newPostForm.title,
+            body: this.newPostForm.body
         }
 
-        this.currentPostViewMode = POST_CARD_MODES.VIEW
+        this.isPostViewMode = POST_CARD_MODES.VIEW
         this.postEdited.emit(updatedPost)
     }
 }
