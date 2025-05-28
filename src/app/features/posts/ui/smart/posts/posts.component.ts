@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {OnInit} from '@angular/core';
 import {FormsModule} from "@angular/forms";
-import {map} from "rxjs";
+import {map, Observable} from "rxjs";
 import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
@@ -15,6 +15,8 @@ import {AppFilterSelection, FilterOption} from "../../../../../core/common/model
 import {PostCardComponent} from "../../dumb/post-card/post-card.component";
 import {PostFormComponent} from "../post-form/post-form.component";
 import {FilterOptionComponent} from "../../../../../ui/dumb/filter-option/filter-option.component";
+import {PostsStateService} from "../../../application/services/posts-state.service";
+import {AsyncPipe} from "@angular/common";
 
 @Component({
     selector: 'app-posts',
@@ -28,13 +30,16 @@ import {FilterOptionComponent} from "../../../../../ui/dumb/filter-option/filter
         MatFormFieldModule,
         MatSelectModule,
         MatButton,
-        FilterOptionComponent
+        FilterOptionComponent,
+        AsyncPipe
     ],
     templateUrl: './posts.component.html',
     styleUrl: './posts.component.scss'
 })
 export class PostsComponent implements OnInit {
-    isPostsLoading: LoadingStatus = 'idle'
+    posts$: Observable<AppPost[]>
+    isStatusLoading$: Observable<LoadingStatus>
+
     activeFilter: FilterOption | null = null;
     searchQuery: string = ''
 
@@ -50,7 +55,9 @@ export class PostsComponent implements OnInit {
         {label: 'noBody'}
     ];
 
-    constructor(public postsService: PostsUseCaseService) {
+    constructor(public postsService: PostsUseCaseService, private stateService: PostsStateService,) {
+        this.posts$ = this.stateService.posts$;
+        this.isStatusLoading$ = this.stateService.isStatusLoading$
     }
 
     private applyFilterToPosts(posts: AppPost[], filter: FilterOption | null): AppPost[] {
@@ -89,44 +96,55 @@ export class PostsComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.isPostsLoading = 'loading'
-        this.postsService.getPosts(20).pipe(
-            map((posts: AppPost[]) => posts.map((post, index): AppPost => {
-                if (index % 2 === 1) post.title = ''
-                if (index % 5 === 4) post.body = ''
-
-                return post
-            }))
-        ).subscribe({
-            next: (posts) => {
-                this.posts = posts
-                this.filteredPosts = [...posts]
-            },
-            error: () => this.isPostsLoading = 'failed',
-            complete: () => this.isPostsLoading = 'succeeded'
-        })
+        // this.isPostsLoading = 'loading'
+        // this.postsService.getPosts(20).pipe(
+        //     map((posts: AppPost[]) => posts.map((post, index): AppPost => {
+        //         if (index % 2 === 1) post.title = ''
+        //         if (index % 5 === 4) post.body = ''
+        //
+        //         return post
+        //     }))
+        // ).subscribe({
+        //     next: (posts) => {
+        //         this.posts = posts
+        //         this.filteredPosts = [...posts]
+        //     },
+        //     error: () => this.isPostsLoading = 'failed',
+        //     complete: () => this.isPostsLoading = 'succeeded'
+        // })
+        this.stateService.loadPosts(20);
+        this.isStatusLoading$.subscribe(() => console.log('status', this.isStatusLoading$))
     }
 
     searchPostsByBody(): void {
         this.filteredPosts = this.applyFiltersAndSearch(this.posts, this.activeFilter, this.searchQuery)
     }
 
+    // deletePost(id: number): void {
+    //     this.postsService.deletePost(id).subscribe({
+    //         next: () => {
+    //             this.posts = this.posts.filter(post => post.id !== id)
+    //             this.filteredPosts = this.filteredPosts.filter(post => post.id !== id)
+    //         },
+    //     })
+    // }
+
     deletePost(id: number): void {
-        this.postsService.deletePost(id).subscribe({
-            next: () => {
-                this.posts = this.posts.filter(post => post.id !== id)
-                this.filteredPosts = this.filteredPosts.filter(post => post.id !== id)
-            },
-        })
+        this.stateService.deletePost(id);
     }
 
+
+    // updatePost(post: AppPost): void {
+    //     this.postsService.updatePost(post).subscribe({
+    //         next: () => {
+    //             this.posts = this.posts.map(p => p.id === post.id ? post : p)
+    //             this.filteredPosts = this.filteredPosts.map(p => p.id === post.id ? post : p)
+    //         },
+    //     })
+    // }
+
     updatePost(post: AppPost): void {
-        this.postsService.updatePost(post).subscribe({
-            next: () => {
-                this.posts = this.posts.map(p => p.id === post.id ? post : p)
-                this.filteredPosts = this.filteredPosts.map(p => p.id === post.id ? post : p)
-            },
-        })
+        this.stateService.updatePost(post);
     }
 
     createPost(): void {

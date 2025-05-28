@@ -3,7 +3,6 @@ import {HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {ApiAdapterService} from "../../../../infrastructure/adapters/api-adapter.service";
 import {AppNewPostForm} from "../common/models/post-form.interface";
-import {FilterOption} from "../../../../core/common/models/filter-option.model";
 import {AppPost} from "../common/models/post.interface";
 
 @Injectable({

@@ -1,10 +1,10 @@
-@if (isPostsLoading === 'loading') {
+@if ((isStatusLoading$ | async) === 'loading') {
     <div class="wrapper">
         <mat-spinner color="primary" [diameter]="40"></mat-spinner>
     </div>
 }
 
-@if (isPostsLoading === 'failed' || posts.length === 0) {
+@if ((isStatusLoading$ | async) === 'failed') {
     <div>Posts didn't load</div>
 } @else {
     <app-post-form [formData]="formGroup" (onSubmit)="createPost()"></app-post-form>
@@ -31,7 +31,7 @@
     @if (searchQuery && filteredPosts.length === 0) {
         <div>Posts not found</div>
     } @else {
-        @for (post of filteredPosts; track post.id) {
+        @for (post of posts$ | async; track post.id) {
             <app-post-card
                 [post]="post"
                 (postDeleted)="deletePost($event)"
