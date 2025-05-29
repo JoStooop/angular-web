@@ -3,6 +3,7 @@ import {BehaviorSubject, Subject} from "rxjs";
 import {AppPost} from "../common/models/post.interface";
 import {LoadingStatus} from "../../../../application/common/models/loading-status.type";
 import {PostsUseCaseService} from "./posts-use-case.service";
+import {FilterOption} from "../../../../core/common/models/filter-option.model";
 
 @Injectable({
     providedIn: 'root'
@@ -10,11 +11,15 @@ import {PostsUseCaseService} from "./posts-use-case.service";
 export class PostsStateService {
     postsService = inject(PostsUseCaseService)
 
-    private _posts$ = new BehaviorSubject<AppPost[]>([]);
-    private _isStatusLoading$ = new BehaviorSubject<LoadingStatus>('idle');
+    private _posts$ = new BehaviorSubject<AppPost[]>([])
+    private _isStatusLoading$ = new BehaviorSubject<LoadingStatus>('idle')
+    private _activeFilter$ = new BehaviorSubject<FilterOption | null>(null)
+    private _searchQuery$ = new BehaviorSubject<string>('')
 
-    posts$ = this._posts$.asObservable();
-    isStatusLoading$ = this._isStatusLoading$.asObservable();
+    posts$ = this._posts$.asObservable()
+    isStatusLoading$ = this._isStatusLoading$.asObservable()
+    activeFilter$ = this._activeFilter$.asObservable()
+    searchQuery$ = this._searchQuery$.asObservable()
 
     constructor() {
     }
@@ -57,5 +62,12 @@ export class PostsStateService {
         })
     }
 
+    setActiveFilter(filter: FilterOption | null): void {
+        this._activeFilter$.next(filter)
+    }
+
+    setSearchQuery(query: string): void {
+        this._searchQuery$.next(query)
+    }
 
 }

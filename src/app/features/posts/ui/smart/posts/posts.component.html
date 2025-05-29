@@ -13,22 +13,22 @@
         <div class="filters-actions">
             <app-filter-option
                 [filterOptions]="filterOptions"
-                [activeFilter]="activeFilter"
+                [activeFilter]="activeFilter$ | async"
                 (filterChanged)="applyFilters($event)"
             ></app-filter-option>
 
-            @if (activeFilter !== null) {
+            @if ((activeFilter$ | async) !== null) {
                 <button mat-raised-button (click)="resetFilters()">Reset</button>
             }
         </div>
 
-        <mat-form-field class="search" appearance="outline">
-            <mat-label>Search</mat-label>
-            <input matInput type="text" [(ngModel)]="searchQuery" (ngModelChange)="searchPostsByBody()">
-        </mat-form-field>
+<!--        <mat-form-field class="search" appearance="outline">-->
+<!--            <mat-label>Search</mat-label>-->
+<!--            <input matInput type="text" [ngModel]="searchQuery$ | async" (ngModelChange)="searchPostsByBody()">-->
+<!--        </mat-form-field>-->
     </div>
 
-    @if (searchQuery && filteredPosts.length === 0) {
+    @if ((searchQuery$ | async) ) {
         <div>Posts not found</div>
     } @else {
         @for (post of posts$ | async; track post.id) {

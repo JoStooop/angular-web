@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {OnInit} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {map, Observable} from "rxjs";
@@ -37,14 +37,18 @@ import {AsyncPipe} from "@angular/common";
     styleUrl: './posts.component.scss'
 })
 export class PostsComponent implements OnInit {
+     postsStateService = inject(PostsStateService)
+
     posts$: Observable<AppPost[]>
     isStatusLoading$: Observable<LoadingStatus>
+    activeFilter$: Observable<FilterOption | null>
+    searchQuery$: Observable<string>
 
-    activeFilter: FilterOption | null = null;
-    searchQuery: string = ''
+    // activeFilter: FilterOption | null = null;
+    // searchQuery: string = ''
 
-    posts: AppPost[] = []
-    filteredPosts: AppPost[] = []
+    // posts: AppPost[] = []
+    // filteredPosts: AppPost[] = []
 
     formGroup: AppNewPostForm = {title: '', body: ''}
 
@@ -55,9 +59,11 @@ export class PostsComponent implements OnInit {
         {label: 'noBody'}
     ];
 
-    constructor(public postsService: PostsUseCaseService, private stateService: PostsStateService,) {
-        this.posts$ = this.stateService.posts$;
-        this.isStatusLoading$ = this.stateService.isStatusLoading$
+    constructor() {
+        this.posts$ = this.postsStateService.posts$;
+        this.isStatusLoading$ = this.postsStateService.isStatusLoading$
+        this.activeFilter$ = this.postsStateService.activeFilter$
+        this.searchQuery$ = this.postsStateService.searchQuery$
     }
 
     private applyFilterToPosts(posts: AppPost[], filter: FilterOption | null): AppPost[] {
@@ -112,66 +118,49 @@ export class PostsComponent implements OnInit {
         //     error: () => this.isPostsLoading = 'failed',
         //     complete: () => this.isPostsLoading = 'succeeded'
         // })
-        this.stateService.loadPosts(20);
-        this.isStatusLoading$.subscribe(() => console.log('status', this.isStatusLoading$))
+        this.postsStateService.loadPosts(20);
     }
 
     searchPostsByBody(): void {
-        this.filteredPosts = this.applyFiltersAndSearch(this.posts, this.activeFilter, this.searchQuery)
+        this.postsStateService.setSearchQuery(this.formGroup.body)
+        // this.searchQuery = this.formGroup.body
+        // this.filteredPosts = this.applyFiltersAndSearch(this.posts, this.activeFilter, this.searchQuery)
     }
-
-    // deletePost(id: number): void {
-    //     this.postsService.deletePost(id).subscribe({
-    //         next: () => {
-    //             this.posts = this.posts.filter(post => post.id !== id)
-    //             this.filteredPosts = this.filteredPosts.filter(post => post.id !== id)
-    //         },
-    //     })
-    // }
 
     deletePost(id: number): void {
-        this.stateService.deletePost(id);
+        this.postsStateService.deletePost(id);
     }
 
-
-    // updatePost(post: AppPost): void {
-    //     this.postsService.updatePost(post).subscribe({
-    //         next: () => {
-    //             this.posts = this.posts.map(p => p.id === post.id ? post : p)
-    //             this.filteredPosts = this.filteredPosts.map(p => p.id === post.id ? post : p)
-    //         },
-    //     })
-    // }
-
     updatePost(post: AppPost): void {
-        this.stateService.updatePost(post);
+        this.postsStateService.updatePost(post);
     }
 
     createPost(): void {
-        console.log('crPost', this.formGroup)
-        const newPost = {
-            id: this.posts.length + 1,
-            title: this.formGroup.title,
-            body: this.formGroup.body,
-            userId: 1
-        }
-
-        this.postsService.addPost(newPost).subscribe({
-            next: () => {
-                this.posts = [...this.posts, newPost]
-                this.filteredPosts = [...this.filteredPosts, newPost]
-            },
-            complete: () => this.formGroup = {title: '', body: ''}
-        })
+        // const newPost = {
+        //     id: this.posts.length + 1,
+        //     title: this.formGroup.title,
+        //     body: this.formGroup.body,
+        //     userId: 1
+        // }
+        //
+        // this.postsService.addPost(newPost).subscribe({
+        //     next: () => {
+        //         this.posts = [...this.posts, newPost]
+        //         this.filteredPosts = [...this.filteredPosts, newPost]
+        //     },
+        //     complete: () => this.formGroup = {title: '', body: ''}
+        // })
     }
 
     resetFilters(): void {
-        this.activeFilter = null;
-        this.filteredPosts = this.applyFiltersAndSearch(this.posts, this.activeFilter, this.searchQuery)
+        this.postsStateService.setActiveFilter(null)
+        // this.activeFilter = null;
+        // this.filteredPosts = this.applyFiltersAndSearch(this.posts, this.activeFilter, this.searchQuery)
     }
 
     applyFilters(type: FilterOption): void {
-        this.activeFilter = type;
-        this.filteredPosts = this.applyFiltersAndSearch(this.posts, this.activeFilter, this.searchQuery)
+        this.postsStateService.setActiveFilter(type)
+        // this.activeFilter = type;
+        // this.filteredPosts = this.applyFiltersAndSearch(this.posts, this.activeFilter, this.searchQuery)
     }
 }
