@@ -33,7 +33,7 @@
               }
             ],
             "styles": [
-              "src/app/core/common/styles/styles.scss"
+              "src/assets/styles/styles.scss"
             ],
             "scripts": []
           },
@@ -92,7 +92,7 @@
               }
             ],
             "styles": [
-              "src/app/core/common/styles/styles.scss"
+              "src/assets/styles/styles.scss"
             ],
             "scripts": []
           }

@@ -1,8 +1,7 @@
-@use '../../../../../core/common/styles/mixins';
-
+@use '../../../../../../assets/styles/mixins/mixins-screen';
 :host {
 
-    @include mixins.max-medium {
+    @include mixins-screen.max-medium {
         padding: 0 1.5rem;
     }
 }

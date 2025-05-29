@@ -7,6 +7,9 @@ export class TruncatePipe implements PipeTransform {
     transform(value: string, limit: number = 100, ellipsis: string = '...'): string {
         if (!value) return '';
 
-        return value.length > limit ? value.slice(0, limit) + ellipsis : value;
+        const shouldTruncate: boolean = value.length > limit
+        const truncatedValue: string = value.slice(0, limit) + ellipsis
+
+        return shouldTruncate ? truncatedValue : value
     }
 }

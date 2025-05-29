@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {Post} from "../../../common/models/post.interface";
-import {EditPostForm} from "../../common/models/post-form.interface";
+import {AppPost} from "../../../application/common/models/post.interface";
+import {AppNewPostForm} from "../../../application/common/models/post-form.interface";
 import {MatButton} from "@angular/material/button";
 import {MatCardModule} from "@angular/material/card";
 import {MatIconModule} from "@angular/material/icon";
@@ -16,8 +16,8 @@ import {MatFormFieldModule} from "@angular/material/form-field";
     styleUrl: './post-edit.component.scss'
 })
 export class PostEditComponent {
-    @Input() post!: Post
-    @Input() editPostForm!: EditPostForm
+    @Input() post!: AppPost
+    @Input() newPostForm!: AppNewPostForm
     @Output() savePost = new EventEmitter<void>()
     @Output() cancelEdit = new EventEmitter<void>()
 }

@@ -1,8 +1,8 @@
-@use '../core/common/styles/mixins';
+@use '../../assets/styles/mixins/mixins-flex';
 
 .wrapper {
     height: 100vh;
-    @include mixins.flex(row, center, center)
+    @include mixins-flex.flex(row, center, center)
 }
 
 .error{

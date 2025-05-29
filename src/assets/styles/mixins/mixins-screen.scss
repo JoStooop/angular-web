@@ -1,13 +1,6 @@
 $screen-phone: 576px;
 $screen-table: 768px;
 
-@mixin flex($direction: row, $justify: flex-start, $align: flex-start) {
-  display: flex;
-  flex-direction: $direction;
-  justify-content: $justify;
-  align-items: $align;
-}
-
 @mixin max-small {
     @media (max-width: #{$screen-phone}) {
         @content;

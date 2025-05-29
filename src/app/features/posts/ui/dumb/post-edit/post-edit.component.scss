@@ -1,4 +1,5 @@
-@use '../../../../../core/common/styles/mixins';
+@use '../../../../../../assets/styles/mixins/mixins-flex';
+@use '../../../../../../assets/styles/mixins/mixins-screen';
 
 .card {
     display: flex;
@@ -11,7 +12,7 @@
 
     &-actions {
         margin-left: auto;
-        @include mixins.flex(column, space-between, flex-end);
+        @include mixins-flex.flex(column, space-between, flex-end);
         gap: 0.8rem;
         padding: 1rem 1rem 1rem 0;
     }
@@ -26,7 +27,7 @@
     width: 100%;
 }
 
-@include mixins.max-medium {
+@include mixins-screen.max-medium {
     .card {
 
         &-content {
@@ -35,7 +36,7 @@
     }
 }
 
-@include mixins.max-small {
+@include mixins-screen.max-small {
     .card {
 
         &-content {

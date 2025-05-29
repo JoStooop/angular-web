@@ -22,5 +22,4 @@ export class AppGlobalConfig {
     get postsEndpoint(): string {
         return this.getEndpoint('/posts');
     }
-    // А почему сразу не вызывать getEndpoint и передавать эндпоинт?
 }
