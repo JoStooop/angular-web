@@ -1,21 +1,21 @@
 <mat-card class="card">
     <mat-card-content>
-        <form class="form" (submit)="onSubmit.emit()">
+        <form class="form" (ngSubmit)="onSubmit.emit()" [formGroup]="formGroup">
             <mat-form-field class="form-field" appearance="outline">
                 <mat-label>Title</mat-label>
-                <input color="primary" matInput [(ngModel)]="formData.title" name="title">
+                <input color="primary" matInput formControlName="title" name="title">
             </mat-form-field>
 
             <mat-form-field class="form-field" appearance="outline">
                 <mat-label>Body</mat-label>
-                <textarea matInput [(ngModel)]="formData.body" name="body"></textarea>
+                <textarea matInput formControlName="body" name="body"></textarea>
             </mat-form-field>
 
             <button class="form-button"
                     mat-raised-button
                     color="primary"
                     type="submit"
-                    [disabled]="!formData.title || !formData.body"
+                    [disabled]="formGroup.invalid"
                     (click)="openSnackBar('Successfully created', 'Close')">
                 Create post
             </button>

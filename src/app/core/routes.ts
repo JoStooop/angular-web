@@ -15,6 +15,6 @@ export const routes: Routes = [
     {
         path: CORE_ROUTE_PATHS.ERROR.PATH,
         title: CORE_ROUTE_PATHS.ERROR.TITLE,
-        loadComponent: () => import('../features/error/ui/dumb/error/error.component').then(m => m.ErrorComponent)
+        loadComponent: () => import('../features/error/ui/smart/error/error.component').then(m => m.ErrorComponent)
     }
 ];

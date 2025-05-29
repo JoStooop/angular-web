@@ -1,6 +1,6 @@
 import {Component, EventEmitter, inject, Input, Output} from '@angular/core';
 import {AppNewPostForm} from "../../../application/common/models/post-form.interface";
-import {FormsModule} from "@angular/forms";
+import {FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatCardContent, MatCardModule} from "@angular/material/card";
 import {MatInputModule} from "@angular/material/input";
 import {MatButtonModule} from "@angular/material/button";
@@ -17,13 +17,14 @@ import {MatSnackBar} from "@angular/material/snack-bar";
         MatCardContent,
         MatFormFieldModule,
         MatInputModule,
-        MatButtonModule
+        MatButtonModule,
+        ReactiveFormsModule
     ],
     templateUrl: './post-form.component.html',
     styleUrl: './post-form.component.scss'
 })
 export class PostFormComponent {
-    @Input() formData!: AppNewPostForm
+    @Input() formGroup!: FormGroup
     @Output() onSubmit = new EventEmitter<void>()
 
     private _snackBar = inject(MatSnackBar);

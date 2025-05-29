@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {Location} from '@angular/common';
 import {RouterLink} from "@angular/router"
 import {MatCardModule} from '@angular/material/card';
@@ -17,10 +17,9 @@ import {CORE_ROUTE_PATHS} from "../../../../../core/common/const/route-paths.con
     styleUrl: './error.component.scss'
 })
 export class ErrorComponent {
-    ROUTE = CORE_ROUTE_PATHS;
+    location = inject(Location)
 
-    constructor(private location: Location) {
-    }
+    ROUTE = CORE_ROUTE_PATHS;
 
     goBack(): void {
         this.location.back()

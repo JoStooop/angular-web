@@ -4,10 +4,10 @@
     </div>
 }
 
-@if ((isStatusLoading$ | async) === 'failed') {
+@if ((isStatusLoading$ | async) === 'failed'  || ((posts$ | async)?.length === 0)) {
     <div>Posts didn't load</div>
 } @else {
-    <app-post-form [formData]="formGroup" (onSubmit)="createPost()"></app-post-form>
+    <app-post-form [formGroup]="formGroup" (onSubmit)="createPost()"></app-post-form>
 
     <div class="posts-actions">
         <div class="filters-actions">
@@ -22,16 +22,16 @@
             }
         </div>
 
-<!--        <mat-form-field class="search" appearance="outline">-->
-<!--            <mat-label>Search</mat-label>-->
-<!--            <input matInput type="text" [ngModel]="searchQuery$ | async" (ngModelChange)="searchPostsByBody()">-->
-<!--        </mat-form-field>-->
+        <mat-form-field class="search" appearance="outline">
+            <mat-label>Search</mat-label>
+            <input matInput type="text" [formControl]="searchControl">
+        </mat-form-field>
     </div>
 
     @if ((searchQuery$ | async) ) {
         <div>Posts not found</div>
     } @else {
-        @for (post of posts$ | async; track post.id) {
+        @for (post of filteredPosts$ | async; track post.id) {
             <app-post-card
                 [post]="post"
                 (postDeleted)="deletePost($event)"

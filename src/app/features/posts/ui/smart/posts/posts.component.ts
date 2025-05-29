@@ -1,7 +1,8 @@
 import {Component, inject} from '@angular/core';
 import {OnInit} from '@angular/core';
-import {FormsModule} from "@angular/forms";
-import {map, Observable} from "rxjs";
+import {AsyncPipe} from "@angular/common";
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {BehaviorSubject, catchError, combineLatest, map, of, startWith, tap} from "rxjs";
 import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
@@ -10,13 +11,10 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {AppPost} from "../../../application/common/models/post.interface";
 import {PostsUseCaseService} from "../../../application/services/posts-use-case.service";
 import {LoadingStatus} from "../../../../../application/common/models/loading-status.type";
-import {AppNewPostForm} from "../../../application/common/models/post-form.interface";
 import {AppFilterSelection, FilterOption} from "../../../../../core/common/models/filter-option.model";
 import {PostCardComponent} from "../../dumb/post-card/post-card.component";
 import {PostFormComponent} from "../post-form/post-form.component";
 import {FilterOptionComponent} from "../../../../../ui/dumb/filter-option/filter-option.component";
-import {PostsStateService} from "../../../application/services/posts-state.service";
-import {AsyncPipe} from "@angular/common";
 
 @Component({
     selector: 'app-posts',
@@ -31,26 +29,38 @@ import {AsyncPipe} from "@angular/common";
         MatSelectModule,
         MatButton,
         FilterOptionComponent,
-        AsyncPipe
+        AsyncPipe,
+        ReactiveFormsModule
     ],
     templateUrl: './posts.component.html',
     styleUrl: './posts.component.scss'
 })
 export class PostsComponent implements OnInit {
-     postsStateService = inject(PostsStateService)
+    postsService = inject(PostsUseCaseService)
 
-    posts$: Observable<AppPost[]>
-    isStatusLoading$: Observable<LoadingStatus>
-    activeFilter$: Observable<FilterOption | null>
-    searchQuery$: Observable<string>
+    posts$ = new BehaviorSubject<AppPost[]>([])
+    isStatusLoading$ = new BehaviorSubject<LoadingStatus>('idle')
+    activeFilter$ = new BehaviorSubject<FilterOption | null>(null)
+    searchQuery$ = new BehaviorSubject<string>('')
 
-    // activeFilter: FilterOption | null = null;
-    // searchQuery: string = ''
+    searchControl: FormControl = new FormControl('')
 
-    // posts: AppPost[] = []
-    // filteredPosts: AppPost[] = []
+    filteredPosts$ = combineLatest([
+        this.posts$,
+        this.activeFilter$,
+        this.searchControl.valueChanges.pipe(startWith(''))
+    ]).pipe(
+        map(([posts, activeFilter, searchQuery]): AppPost[] => {
+            return this.applyFiltersAndSearch(posts, activeFilter, searchQuery)
+        })
+    )
 
-    formGroup: AppNewPostForm = {title: '', body: ''}
+    // Думал вынести в utils и применить = createFormPost()
+    // Но нигде больше не используется поэтому не стал
+    formGroup: FormGroup = new FormGroup({
+        title: new FormControl('', Validators.minLength(2)),
+        body: new FormControl('', Validators.minLength(3))
+    })
 
     filterOptions: AppFilterSelection[] = [
         {label: 'hasTitle'},
@@ -58,13 +68,6 @@ export class PostsComponent implements OnInit {
         {label: 'noTitle'},
         {label: 'noBody'}
     ];
-
-    constructor() {
-        this.posts$ = this.postsStateService.posts$;
-        this.isStatusLoading$ = this.postsStateService.isStatusLoading$
-        this.activeFilter$ = this.postsStateService.activeFilter$
-        this.searchQuery$ = this.postsStateService.searchQuery$
-    }
 
     private applyFilterToPosts(posts: AppPost[], filter: FilterOption | null): AppPost[] {
         const hasTitle = (post: AppPost) => post.title.length > 0;
@@ -101,66 +104,61 @@ export class PostsComponent implements OnInit {
         return result
     }
 
+    // TODO: сохранить объект ошибки и потом обработать
     ngOnInit(): void {
-        // this.isPostsLoading = 'loading'
-        // this.postsService.getPosts(20).pipe(
-        //     map((posts: AppPost[]) => posts.map((post, index): AppPost => {
-        //         if (index % 2 === 1) post.title = ''
-        //         if (index % 5 === 4) post.body = ''
-        //
-        //         return post
-        //     }))
-        // ).subscribe({
-        //     next: (posts) => {
-        //         this.posts = posts
-        //         this.filteredPosts = [...posts]
-        //     },
-        //     error: () => this.isPostsLoading = 'failed',
-        //     complete: () => this.isPostsLoading = 'succeeded'
-        // })
-        this.postsStateService.loadPosts(20);
-    }
+        this.isStatusLoading$.next('loading')
+        this.postsService.getPosts(20).pipe(
+            map((posts: AppPost[]) => posts.map((post, index): AppPost => {
+                if (index % 2 === 1) post.title = ''
+                if (index % 5 === 4) post.body = ''
 
-    searchPostsByBody(): void {
-        this.postsStateService.setSearchQuery(this.formGroup.body)
-        // this.searchQuery = this.formGroup.body
-        // this.filteredPosts = this.applyFiltersAndSearch(this.posts, this.activeFilter, this.searchQuery)
+                return post
+            })),
+            tap((posts) => {
+                this.posts$.next(posts)
+                this.isStatusLoading$.next('succeeded')
+            }),
+            catchError((error) => {
+                this.isStatusLoading$.next('failed')
+                return of([])
+            }),
+        ).subscribe((posts) => console.log(posts))
     }
 
     deletePost(id: number): void {
-        this.postsStateService.deletePost(id);
+        const currentPosts = this.posts$.value
+        const deletedPost = currentPosts.filter((post) => post.id !== id)
+
+        this.posts$.next(deletedPost)
     }
 
     updatePost(post: AppPost): void {
-        this.postsStateService.updatePost(post);
+        const currentPosts = this.posts$.value
+        const updatedPost = currentPosts.map((p) => p.id === post.id ? post : p)
+
+        this.posts$.next(updatedPost)
     }
 
     createPost(): void {
-        // const newPost = {
-        //     id: this.posts.length + 1,
-        //     title: this.formGroup.title,
-        //     body: this.formGroup.body,
-        //     userId: 1
-        // }
-        //
-        // this.postsService.addPost(newPost).subscribe({
-        //     next: () => {
-        //         this.posts = [...this.posts, newPost]
-        //         this.filteredPosts = [...this.filteredPosts, newPost]
-        //     },
-        //     complete: () => this.formGroup = {title: '', body: ''}
-        // })
+        if (!this.formGroup.valid) return
+
+        const currentPosts = this.posts$.value
+
+        const newPost = {
+            id: this.posts$.value.length + 1,
+            userId: 1,
+            ...this.formGroup.value
+        }
+
+        this.posts$.next([...currentPosts, newPost])
+        this.formGroup.reset()
     }
 
     resetFilters(): void {
-        this.postsStateService.setActiveFilter(null)
-        // this.activeFilter = null;
-        // this.filteredPosts = this.applyFiltersAndSearch(this.posts, this.activeFilter, this.searchQuery)
+        this.activeFilter$.next(null)
     }
 
     applyFilters(type: FilterOption): void {
-        this.postsStateService.setActiveFilter(type)
-        // this.activeFilter = type;
-        // this.filteredPosts = this.applyFiltersAndSearch(this.posts, this.activeFilter, this.searchQuery)
+        this.activeFilter$.next(type)
     }
 }
