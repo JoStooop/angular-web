@@ -28,7 +28,7 @@
         </mat-form-field>
     </div>
 
-    @if ((searchQuery$ | async) ) {
+    @if (searchControl.value.length < 0 || ((filteredPosts$ | async)?.length === 0)) {
         <div>Posts not found</div>
     } @else {
         @for (post of filteredPosts$ | async; track post.id) {

@@ -41,7 +41,6 @@ export class PostsComponent implements OnInit {
     posts$ = new BehaviorSubject<AppPost[]>([])
     isStatusLoading$ = new BehaviorSubject<LoadingStatus>('idle')
     activeFilter$ = new BehaviorSubject<FilterOption | null>(null)
-    searchQuery$ = new BehaviorSubject<string>('')
 
     searchControl: FormControl = new FormControl('')
 
@@ -55,8 +54,6 @@ export class PostsComponent implements OnInit {
         })
     )
 
-    // Думал вынести в utils и применить = createFormPost()
-    // Но нигде больше не используется поэтому не стал
     formGroup: FormGroup = new FormGroup({
         title: new FormControl('', Validators.minLength(2)),
         body: new FormControl('', Validators.minLength(3))
@@ -114,15 +111,12 @@ export class PostsComponent implements OnInit {
 
                 return post
             })),
-            tap((posts) => {
-                this.posts$.next(posts)
-                this.isStatusLoading$.next('succeeded')
-            }),
-            catchError((error) => {
+            tap(() => this.isStatusLoading$.next('succeeded')),
+            catchError(() => {
                 this.isStatusLoading$.next('failed')
                 return of([])
             }),
-        ).subscribe((posts) => console.log(posts))
+        ).subscribe((posts) => this.posts$.next(posts))
     }
 
     deletePost(id: number): void {
