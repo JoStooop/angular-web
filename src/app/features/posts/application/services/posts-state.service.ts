@@ -24,6 +24,8 @@ export class PostsStateService {
     constructor() {
     }
 
+    // TODO: переписать на pipe
+
     loadPosts(limit?: number): void {
         this._isStatusLoading$.next('loading')
         this.postsService.getPosts(limit).subscribe({
