@@ -57,7 +57,9 @@ export class PostsComponent implements OnInit {
     modifiedPosts$!: Observable<AppPost[]>
 
     isPostsLoading$: BehaviorSubject<LoadingStatus> = new BehaviorSubject<LoadingStatus>('idle');
-    activeFilter$: BehaviorSubject<FilterOption | null> = new BehaviorSubject<FilterOption | null>(null);
+    // activeFilter$: BehaviorSubject<FilterOption | null> = new BehaviorSubject<FilterOption | null>(null)
+    activeFilter$!: Observable<FilterOption | null>;
+
 
     deletePost$: Subject<number> = new Subject<number>();
     updatePost$: Subject<AppPost> = new Subject<AppPost>();
@@ -89,6 +91,13 @@ export class PostsComponent implements OnInit {
             }),
             shareReplay(1),
             tap(() => this.isPostsLoading$.next('succeeded'))
+        )
+
+        this.activeFilter$ = merge(
+            this.applyFilter$.pipe(map(type => type)),
+            this.resetFilter$.pipe(map(() => null))
+        ).pipe(
+            shareReplay(1),
         )
 
         this.modifiedPosts$ = merge(
@@ -162,8 +171,6 @@ export class PostsComponent implements OnInit {
             ),
             shareReplay(1)
         );
-
-        this.initializeSideEffects();
     }
 
     private applyFilterToPosts(posts: AppPost[], filter: FilterOption | null): AppPost[] {
@@ -207,16 +214,5 @@ export class PostsComponent implements OnInit {
             title: index % 2 === 1 ? '' : post.title,
             body: index % 5 === 4 ? '' : post.body,
         }))
-    }
-
-    private initializeSideEffects(): void {
-
-        this.applyFilter$
-            .pipe(untilDestroyed(this))
-            .subscribe(type => this.activeFilter$.next(type));
-
-        this.resetFilter$
-            .pipe(untilDestroyed(this))
-            .subscribe(() => this.activeFilter$.next(null));
     }
 }
