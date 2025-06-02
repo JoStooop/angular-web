@@ -16,7 +16,7 @@
                     color="primary"
                     type="submit"
                     [disabled]="!formGroup.valid"
-                    (click)="openSnackBar('Successfully created', 'Close')">
+                    (click)="createPost$.next()">
                 Create post
             </button>
         </form>

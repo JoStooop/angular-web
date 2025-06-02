@@ -6,15 +6,14 @@ import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {
     BehaviorSubject,
     catchError,
-    combineLatest,
+    combineLatestWith, exhaustMap,
     filter,
     map, merge,
     Observable,
-    of, shareReplay,
+    of, scan, shareReplay,
     startWith,
     Subject, switchMap,
     tap,
-    withLatestFrom
 } from "rxjs";
 import {MatInputModule} from "@angular/material/input";
 import {MatSelectModule} from "@angular/material/select";
@@ -26,8 +25,9 @@ import {PostsUseCaseService} from "../../../application/services/posts-use-case.
 import {LoadingStatus} from "../../../../../application/common/models/loading-status.type";
 import {AppFilterSelection, FilterOption} from "../../../../../core/common/models/filter-option.model";
 import {PostCardComponent} from "../../dumb/post-card/post-card.component";
-import {PostFormComponent} from "../post-form/post-form.component";
+import {PostFormComponent} from "../../dumb/post-form/post-form.component";
 import {FilterOptionComponent} from "../../../../../ui/dumb/filter-option/filter-option.component";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @UntilDestroy()
 @Component({
@@ -51,6 +51,7 @@ import {FilterOptionComponent} from "../../../../../ui/dumb/filter-option/filter
 })
 export class PostsComponent implements OnInit {
     postsUseCase = inject(PostsUseCaseService);
+    private _snackBar = inject(MatSnackBar)
 
     originalPosts$!: Observable<AppPost[]>;
     modifiedPosts$!: Observable<AppPost[]>
@@ -66,8 +67,8 @@ export class PostsComponent implements OnInit {
 
     searchPostControl: FormControl = new FormControl('');
     createPostFormGroup: FormGroup = new FormGroup({
-        title: new FormControl('', Validators.minLength(2)),
-        body: new FormControl('', Validators.minLength(3))
+        title: new FormControl('', [Validators.required, Validators.minLength(2)]),
+        body: new FormControl('', [Validators.required, Validators.minLength(3)])
     });
 
     filterOptions: AppFilterSelection[] = [
@@ -77,12 +78,89 @@ export class PostsComponent implements OnInit {
         {label: 'noBody'}
     ];
 
+    // TODO: добить обработку ошибок в catchError
     ngOnInit(): void {
         this.originalPosts$ = this.postsUseCase.getPosts(20).pipe(
             tap(() => this.isPostsLoading$.next('loading')),
-            catchError(() => of([])),
+            catchError(() => {
+                this.isPostsLoading$.next('failed')
+                this._snackBar.open('Failed to fetch posts', 'Close', {duration: 3000})
+                return of([])
+            }),
             shareReplay(1),
             tap(() => this.isPostsLoading$.next('succeeded'))
+        )
+
+        this.modifiedPosts$ = merge(
+            this.originalPosts$
+                .pipe(map(originalPosts => this.clearEverySecondTitleAndFifthBody(originalPosts))),
+
+            this.deletePost$.pipe(
+                exhaustMap(id =>
+                    this.postsUseCase.deletePost(id).pipe(
+                        map(() => ({evt: 'delete', id})),
+                        catchError((error) => of({evt: 'failed'}))
+                    )
+                ),
+                tap(() => this._snackBar.open('Post deleted', 'Close', {duration: 2000}))
+            ),
+
+            this.updatePost$.pipe(
+                switchMap(updatedPost =>
+                    this.postsUseCase.updatePost(updatedPost).pipe(
+                        map(() => ({evt: 'update', post: updatedPost})),
+                        catchError((error) => of({evt: 'failed'}))
+                    )
+                ),
+                tap(() => this._snackBar.open('Post updated', 'Close', {duration: 2000}))
+            ),
+
+            this.createPost$.pipe(
+                filter(() => this.createPostFormGroup.valid),
+                map(() => ({
+                    userId: 2,
+                    id: Date.now(),
+                    ...this.createPostFormGroup.value
+                })),
+                exhaustMap(newPost =>
+                    this.postsUseCase.addPost(newPost).pipe(
+                        tap(() => {
+                            this.createPostFormGroup.reset()
+                            this._snackBar.open('Post created', 'Close', {duration: 2000})
+                        }),
+
+                        map(() => ({evt: 'add', post: newPost})),
+                        catchError((error) => of({evt: 'failed'}))
+                    )
+                ),
+            )
+        ).pipe(
+            scan((acc: AppPost[], evt: any) => {
+                if (Array.isArray(evt)) {
+                    return this.clearEverySecondTitleAndFifthBody(evt);
+                }
+
+                switch (evt.evt) {
+                    case 'delete':
+                        return acc.filter(post => post.id !== evt.id);
+                    case 'update':
+                        return acc.map(post =>
+                            post.id === evt.post.id ? evt.post : post
+                        );
+                    case 'add':
+                        return [...acc, evt.post];
+                    default:
+                        return acc;
+                }
+            }, []),
+            combineLatestWith(
+                this.activeFilter$.pipe(startWith(null)),
+                this.searchPostControl.valueChanges.pipe(startWith(''))
+            ),
+            map(([posts, filter, query]) =>
+                this.applyFilterAndSearchByPosts(posts, filter, query)
+            ),
+            shareReplay(1)
         );
 
         this.initializeSideEffects();
@@ -132,57 +210,6 @@ export class PostsComponent implements OnInit {
     }
 
     private initializeSideEffects(): void {
-
-        const baseModifiedPosts$ = merge(
-            this.originalPosts$.pipe(
-                map(posts => this.clearEverySecondTitleAndFifthBody(posts))
-            ),
-
-            this.deletePost$.pipe(
-                tap(id => console.log(id)),
-                switchMap(id =>
-                    this.postsUseCase.deletePost(id).pipe(
-                        withLatestFrom(this.modifiedPosts$),
-                        map(([_, modifiedPosts]) => modifiedPosts.filter(post => post.id !== id)),
-                        catchError(() => of([]))
-                    )
-                ),
-            ),
-
-            this.updatePost$.pipe(
-                switchMap(updatedPost => this.postsUseCase.updatePost(updatedPost).pipe(
-                    withLatestFrom(this.modifiedPosts$),
-                    map(([_, modifiedPosts]) => modifiedPosts.map(post => post.id === updatedPost.id ? updatedPost : post)),
-                    catchError(() => of([]))
-                ))
-            ),
-
-            this.createPost$.pipe(
-                filter(() => this.createPostFormGroup.valid),
-                map(() => ({
-                    userId: 2,
-                    id: Date.now(),
-                    ...this.createPostFormGroup.value,
-                })),
-                switchMap(newPost =>
-                    this.postsUseCase.addPost(newPost).pipe(
-                        withLatestFrom(this.modifiedPosts$),
-                        map(([createdPost, modifiedPosts]) => [...modifiedPosts, createdPost]),
-                        catchError(() => of([]))
-                    )
-                ),
-                tap(() => this.createPostFormGroup.reset()),
-            )
-        )
-
-        this.modifiedPosts$ = combineLatest([
-            baseModifiedPosts$,
-            this.activeFilter$.pipe(startWith(null)),
-            this.searchPostControl.valueChanges.pipe(startWith(''))
-        ]).pipe(
-            map(([modifiedPosts, activeFilter, searchQuery]) => this.applyFilterAndSearchByPosts(modifiedPosts, activeFilter, searchQuery)),
-            untilDestroyed(this)
-        );
 
         this.applyFilter$
             .pipe(untilDestroyed(this))

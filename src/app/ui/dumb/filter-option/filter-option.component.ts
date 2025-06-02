@@ -17,7 +17,7 @@ import {AppFilterSelection, FilterOption} from "../../../core/common/models/filt
     styleUrl: './filter-option.component.scss'
 })
 export class FilterOptionComponent {
-    @Input() filterOptions: AppFilterSelection[] = [];
-    @Input() activeFilter: FilterOption | null = null;
+    @Input({required: true}) filterOptions: AppFilterSelection[] = [];
+    @Input({required: true}) activeFilter: FilterOption | null = null;
     @Output() filterChanged = new EventEmitter<FilterOption>();
 }
