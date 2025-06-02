@@ -15,7 +15,7 @@
                     mat-raised-button
                     color="primary"
                     type="submit"
-                    [disabled]="formGroup.invalid"
+                    [disabled]="!formGroup.valid"
                     (click)="openSnackBar('Successfully created', 'Close')">
                 Create post
             </button>

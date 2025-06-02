@@ -1,40 +1,29 @@
 import {inject, Injectable} from '@angular/core';
-import {HttpParams} from "@angular/common/http";
-import {Observable} from "rxjs";
-import {ApiAdapterService} from "../../../../infrastructure/adapters/api-adapter.service";
-import {AppNewPostForm} from "../common/models/post-form.interface";
+import {catchError, Observable, of} from "rxjs";
 import {AppPost} from "../common/models/post.interface";
+import {PostsApiService} from "../../../../application/services/posts.api.service";
 
 @Injectable({
     providedIn: 'root'
 })
 export class PostsUseCaseService {
-    apiAdapter = inject(ApiAdapterService)
-
-    private _endpoint = 'posts'
-
-    constructor() {
-    }
+    private _postsApi = inject(PostsApiService)
 
     getPosts(limit?: number): Observable<AppPost[]> {
-        let params = new HttpParams();
-        if (limit != null) params = params.set('_limit', limit);
-
-        return this.apiAdapter.get<AppPost[]>(this._endpoint, params)
+        return this._postsApi.getPosts(limit).pipe(
+          catchError(() => of([]))
+        );
     }
 
     addPost(newPost: AppPost): Observable<AppPost> {
-        return this.apiAdapter.post<AppPost>(this._endpoint, newPost)
+        return this._postsApi.addPost(newPost);
     }
 
     updatePost(post: AppPost): Observable<AppPost> {
-        return this.apiAdapter.patch<AppPost, AppNewPostForm>(this._endpoint, post.id, {
-            title: post.title,
-            body: post.body
-        })
+        return this._postsApi.updatePost(post);
     }
 
     deletePost(id: number): Observable<void> {
-        return this.apiAdapter.delete<void>(this._endpoint, id)
+        return this._postsApi.deletePost(id);
     }
 }

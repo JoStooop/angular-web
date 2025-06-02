@@ -1,41 +1,41 @@
-@if ((isStatusLoading$ | async) === 'loading') {
+@if ((isPostsLoading$ | async) === 'loading') {
     <div class="wrapper">
         <mat-spinner color="primary" [diameter]="40"></mat-spinner>
     </div>
 }
 
-@if ((isStatusLoading$ | async) === 'failed'  || ((posts$ | async)?.length === 0)) {
+@if ((isPostsLoading$ | async) === 'failed'  || ((originalPosts$ | async)?.length === 0)) {
     <div>Posts didn't load</div>
 } @else {
-    <app-post-form [formGroup]="formGroup" (onSubmit)="createPost()"></app-post-form>
+    <app-post-form [formGroup]="createPostFormGroup" (onSubmit)="createPost$.next()"></app-post-form>
 
     <div class="posts-actions">
         <div class="filters-actions">
             <app-filter-option
                 [filterOptions]="filterOptions"
                 [activeFilter]="activeFilter$ | async"
-                (filterChanged)="applyFilters($event)"
+                (filterChanged)="applyFilter$.next($event)"
             ></app-filter-option>
 
             @if ((activeFilter$ | async) !== null) {
-                <button mat-raised-button (click)="resetFilters()">Reset</button>
+                <button mat-raised-button (click)="resetFilter$.next()">Reset</button>
             }
         </div>
 
         <mat-form-field class="search" appearance="outline">
             <mat-label>Search</mat-label>
-            <input matInput type="text" [formControl]="searchControl">
+            <input matInput type="text" [formControl]="searchPostControl">
         </mat-form-field>
     </div>
 
-    @if (searchControl.value.length < 0 || ((filteredPosts$ | async)?.length === 0)) {
+    @if (searchPostControl.value.length < 0 || ((originalPosts$ | async)?.length === 0)) {
         <div>Posts not found</div>
     } @else {
-        @for (post of filteredPosts$ | async; track post.id) {
+        @for (post of modifiedPosts$ | async; track post.id) {
             <app-post-card
                 [post]="post"
-                (postDeleted)="deletePost($event)"
-                (postEdited)="updatePost($event)"
+                (postDeleted)="deletePost$.next($event)"
+                (postEdited)="updatePost$.next($event)"
             ></app-post-card>
         }
     }
