@@ -4,8 +4,7 @@ import {MatCardContent, MatCardModule} from "@angular/material/card";
 import {MatInputModule} from "@angular/material/input";
 import {MatButtonModule} from "@angular/material/button";
 import {MatFormFieldModule} from "@angular/material/form-field";
-import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
-import {Subject} from "rxjs";
+import {UntilDestroy} from "@ngneat/until-destroy";
 
 @UntilDestroy()
 @Component({
@@ -23,23 +22,7 @@ import {Subject} from "rxjs";
     templateUrl: './post-form.component.html',
     styleUrl: './post-form.component.scss'
 })
-export class PostFormComponent implements OnInit {
+export class PostFormComponent {
     @Input() formGroup!: FormGroup
     @Output() onSubmit = new EventEmitter<void>()
-
-    createPost$ = new Subject<void>();
-
-    ngOnInit() {
-        this.initializeSideEffects()
-    }
-
-    private initializeSideEffects(): void {
-        this.createPost$
-            .pipe(untilDestroyed(this))
-            .subscribe(() => {
-                if (this.formGroup.valid) {
-                    this.onSubmit.emit()
-                }
-            })
-    }
 }

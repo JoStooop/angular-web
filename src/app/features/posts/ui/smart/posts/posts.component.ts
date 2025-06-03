@@ -105,7 +105,7 @@ export class PostsComponent implements OnInit {
                 .pipe(map(originalPosts => this.clearEverySecondTitleAndFifthBody(originalPosts))),
 
             this.deletePost$.pipe(
-                exhaustMap(id =>
+                switchMap(id =>
                     this.postsUseCase.deletePost(id).pipe(
                         map(() => ({evt: 'delete', id})),
                         catchError((error) => of({evt: 'failed'}))
@@ -131,7 +131,7 @@ export class PostsComponent implements OnInit {
                     id: Date.now(),
                     ...this.createPostFormGroup.value
                 })),
-                exhaustMap(newPost =>
+                switchMap(newPost =>
                     this.postsUseCase.addPost(newPost).pipe(
                         tap(() => {
                             this.createPostFormGroup.reset()
