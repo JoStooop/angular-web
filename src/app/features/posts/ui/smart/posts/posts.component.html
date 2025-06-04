@@ -4,10 +4,10 @@
     </div>
 }
 
-@if ((isPostsLoading$ | async) === 'failed'  || ((originalPosts$ | async)?.length === 0)) {
+@if ((isPostsLoading$ | async) === 'failed' || ((originalPosts$ | async)?.length === 0)) {
     <div>Posts didn't load</div>
 } @else {
-    <app-post-form [formGroup]="createPostFormGroup" (onSubmit)="createPost$.next()"></app-post-form>
+    <app-post-form [formGroup]="createPostFormGroup" (onSubmit)="createPost$.next()" [isCreatePostLoading]="(isCreatePostLoading$ | async) ?? false"></app-post-form>
 
     <div class="posts-actions">
         <div class="filters-actions">
@@ -34,8 +34,8 @@
         @for (post of modifiedPosts$ | async; track post.id) {
             <app-post-card
                 [post]="post"
-                (postDeleted)="deletePost$.next($event)"
-                (postEdited)="updatePost$.next($event)"
+                (postDeleted$)="deletePost$.next($event)"
+                (postEdited$)="updatePost$.next($event)"
             ></app-post-card>
         }
     }

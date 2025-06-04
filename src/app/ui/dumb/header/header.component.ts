@@ -8,7 +8,6 @@ import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 import {MatNavList} from "@angular/material/list";
 import {CORE_ROUTE_PATHS} from "../../../core/common/const/route-paths.const";
 
-
 @Component({
     selector: 'app-header',
     standalone: true,

@@ -1,13 +1,13 @@
 @switch (isPostViewMode) {
     @case (POST_CARD_MODES.VIEW) {
         <app-post-view [post]="post"
-                       (deletePost)="deletePost$.next(post.id)"
+                       [isDeletePostLoading]="(isDeletePostLoading$ | async) ?? false"
+                       (deletePost)="postDeleted$.emit(post.id)"
                        (editPost)="startEditPost$.next()">
         </app-post-view>
     }
     @case (POST_CARD_MODES.EDIT) {
-        <app-post-edit [post]="post"
-                       [newPostForm]="newPostForm"
+        <app-post-edit [newPostForm]="newPostForm"
                        (savePost)="savePost$.next()"
                        (cancelEdit)="cancelEditPost$.next()">
         </app-post-edit>

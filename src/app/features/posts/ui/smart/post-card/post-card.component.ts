@@ -1,13 +1,14 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {AppPost} from "../../../application/common/models/post.interface";
 import {FormsModule} from "@angular/forms";
-import {PostViewComponent} from "../post-view/post-view.component";
-import {PostEditComponent} from "../post-edit/post-edit.component";
+import {PostViewComponent} from "../../dumb/post-view/post-view.component";
+import {PostEditComponent} from "../../dumb/post-edit/post-edit.component";
 import {AppNewPostForm, ViewEditMode} from "../../../application/common/models/post-form.interface";
 import {POST_CARD_MODES} from "../../common/const/post-states.const";
-import {Subject} from "rxjs";
+import {Observable, shareReplay, Subject, tap} from "rxjs";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
+import {PostsUseCaseService} from "../../../application/services/posts-use-case.service";
 
 @UntilDestroy()
 @Component({
@@ -18,28 +19,40 @@ import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
     styleUrls: ['./post-card.component.scss']
 })
 export class PostCardComponent implements OnInit {
-    @Input() post!: AppPost
-    @Output() postDeleted = new EventEmitter<number>()
-    @Output() postEdited = new EventEmitter<AppPost>()
+    private postsUseCase = inject(PostsUseCaseService);
+
+    _post!: AppPost
+
+    @Input() set post(post: AppPost) {
+        this._post = post;
+        this.isPostViewMode = POST_CARD_MODES.VIEW
+    }
+
+    get post(): AppPost {
+        return this._post;
+    }
+
+    @Output() postDeleted$: EventEmitter<number> = new EventEmitter<number>()
+    @Output() postEdited$: EventEmitter<AppPost> = new EventEmitter<AppPost>()
 
     readonly POST_CARD_MODES = POST_CARD_MODES;
 
-    deletePost$: Subject<number> = new Subject<number>()
     startEditPost$: Subject<void> = new Subject<void>()
     cancelEditPost$: Subject<void> = new Subject<void>()
     savePost$: Subject<void> = new Subject<void>()
+
+    isDeletePostLoading$!: Observable<boolean>
 
     isPostViewMode: ViewEditMode = POST_CARD_MODES.VIEW
     newPostForm: AppNewPostForm = {title: '', body: ''};
 
     ngOnInit() {
+        this.isDeletePostLoading$ = this.postsUseCase.isPostLoading(this.post.id, 'delete')
+
         this.initializeSideEffects()
     }
 
     private initializeSideEffects(): void {
-        this.deletePost$
-            .pipe(untilDestroyed(this))
-            .subscribe(id => this.postDeleted.emit(id))
 
         this.startEditPost$
             .pipe(untilDestroyed(this))
@@ -70,7 +83,7 @@ export class PostCardComponent implements OnInit {
                 }
 
                 this.isPostViewMode = POST_CARD_MODES.VIEW
-                this.postEdited.emit(updatedPost)
+                this.postEdited$.emit(updatedPost)
             })
     }
 }

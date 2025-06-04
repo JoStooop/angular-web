@@ -4,16 +4,35 @@ import {MatCardModule} from "@angular/material/card";
 import {MatButton} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {TruncatePipe} from "../../../../../ui/pipes/truncate.pipe";
+import {AsyncPipe} from "@angular/common";
+import {BehaviorSubject} from "rxjs";
 
 @Component({
     selector: 'app-post-view',
     standalone: true,
-    imports: [MatCardModule, MatButton, MatIconModule, TruncatePipe],
+    imports: [MatCardModule, MatButton, MatIconModule, TruncatePipe, AsyncPipe],
     templateUrl: './post-view.component.html',
     styleUrl: './post-view.component.scss'
 })
 export class PostViewComponent {
-    @Input () post!: AppPost
-    @Output() deletePost = new EventEmitter<void>()
-    @Output() editPost = new EventEmitter<void>()
+    _post!: AppPost
+    _isDeletePostLoading: boolean = false
+
+    post$: BehaviorSubject<AppPost | null> = new BehaviorSubject<AppPost | null>(null)
+    isDeletePostLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+
+    @Input()
+    set post(post: AppPost) {
+        this._post = post;
+        this.post$.next(post);
+    }
+
+    @Input()
+    set isDeletePostLoading(isDeletePostLoading: boolean) {
+        this._isDeletePostLoading = isDeletePostLoading;
+        this.isDeletePostLoading$.next(isDeletePostLoading);
+    }
+
+    @Output() deletePost: EventEmitter<void> = new EventEmitter<void>()
+    @Output() editPost: EventEmitter<void> = new EventEmitter<void>()
 }

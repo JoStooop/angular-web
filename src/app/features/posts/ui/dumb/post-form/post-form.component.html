@@ -15,8 +15,8 @@
                     mat-raised-button
                     color="primary"
                     type="submit"
-                    [disabled]="!formGroup.valid">
-                Create post
+                    [disabled]="(isCreatePostLoading$ | async) || !formGroup.valid">
+                {{ (isCreatePostLoading$ | async) ? 'Sending' : 'Create post' }}
             </button>
         </form>
     </mat-card-content>

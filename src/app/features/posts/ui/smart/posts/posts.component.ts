@@ -1,14 +1,14 @@
 import {Component, inject} from '@angular/core';
 import {OnInit} from '@angular/core';
 import {AsyncPipe} from "@angular/common";
-import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
+import {UntilDestroy} from "@ngneat/until-destroy";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {
     BehaviorSubject,
     catchError,
-    combineLatestWith, exhaustMap,
+    combineLatestWith,
     filter,
-    map, merge,
+    map, merge, mergeMap,
     Observable,
     of, scan, shareReplay,
     startWith,
@@ -24,7 +24,7 @@ import {AppPost} from "../../../application/common/models/post.interface";
 import {PostsUseCaseService} from "../../../application/services/posts-use-case.service";
 import {LoadingStatus} from "../../../../../application/common/models/loading-status.type";
 import {AppFilterSelection, FilterOption} from "../../../../../core/common/models/filter-option.model";
-import {PostCardComponent} from "../../dumb/post-card/post-card.component";
+import {PostCardComponent} from "../post-card/post-card.component";
 import {PostFormComponent} from "../../dumb/post-form/post-form.component";
 import {FilterOptionComponent} from "../../../../../ui/dumb/filter-option/filter-option.component";
 import {MatSnackBar} from "@angular/material/snack-bar";
@@ -57,9 +57,7 @@ export class PostsComponent implements OnInit {
     modifiedPosts$!: Observable<AppPost[]>
 
     isPostsLoading$: BehaviorSubject<LoadingStatus> = new BehaviorSubject<LoadingStatus>('idle');
-    // activeFilter$: BehaviorSubject<FilterOption | null> = new BehaviorSubject<FilterOption | null>(null)
     activeFilter$!: Observable<FilterOption | null>;
-
 
     deletePost$: Subject<number> = new Subject<number>();
     updatePost$: Subject<AppPost> = new Subject<AppPost>();
@@ -80,8 +78,14 @@ export class PostsComponent implements OnInit {
         {label: 'noBody'}
     ];
 
+
+    isCreatePostLoading$!: Observable<boolean>
+
     // TODO: добить обработку ошибок в catchError
     ngOnInit(): void {
+        this.isCreatePostLoading$ = this.postsUseCase.isCreatePostLoading()
+
+
         this.originalPosts$ = this.postsUseCase.getPosts(20).pipe(
             tap(() => this.isPostsLoading$.next('loading')),
             catchError(() => {
@@ -103,27 +107,22 @@ export class PostsComponent implements OnInit {
         this.modifiedPosts$ = merge(
             this.originalPosts$
                 .pipe(map(originalPosts => this.clearEverySecondTitleAndFifthBody(originalPosts))),
-
             this.deletePost$.pipe(
-                switchMap(id =>
+                mergeMap(id =>
                     this.postsUseCase.deletePost(id).pipe(
                         map(() => ({evt: 'delete', id})),
-                        catchError((error) => of({evt: 'failed'}))
                     )
                 ),
                 tap(() => this._snackBar.open('Post deleted', 'Close', {duration: 2000}))
             ),
-
             this.updatePost$.pipe(
                 switchMap(updatedPost =>
                     this.postsUseCase.updatePost(updatedPost).pipe(
                         map(() => ({evt: 'update', post: updatedPost})),
-                        catchError((error) => of({evt: 'failed'}))
                     )
                 ),
                 tap(() => this._snackBar.open('Post updated', 'Close', {duration: 2000}))
             ),
-
             this.createPost$.pipe(
                 filter(() => this.createPostFormGroup.valid),
                 map(() => ({
@@ -133,15 +132,13 @@ export class PostsComponent implements OnInit {
                 })),
                 switchMap(newPost =>
                     this.postsUseCase.addPost(newPost).pipe(
-                        tap(() => {
-                            this.createPostFormGroup.reset()
-                            this._snackBar.open('Post created', 'Close', {duration: 2000})
-                        }),
-
                         map(() => ({evt: 'add', post: newPost})),
-                        catchError((error) => of({evt: 'failed'}))
                     )
                 ),
+                tap(() => {
+                    this.createPostFormGroup.reset()
+                    this._snackBar.open('Post created', 'Close', {duration: 2000})
+                }),
             )
         ).pipe(
             scan((acc: AppPost[], evt: any) => {
