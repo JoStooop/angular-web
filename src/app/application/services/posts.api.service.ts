@@ -1,35 +1,33 @@
-import {inject, Injectable} from '@angular/core';
-import {HttpParams} from "@angular/common/http";
+import {Injectable} from '@angular/core';
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {ApiPostsAdapterService} from "../../infrastructure/adapters/api-posts-adapter.service";
-import {AppPost} from "../../features/posts/application/common/models/post.interface";
-import {AppNewPostForm} from "../../features/posts/application/common/models/post-form.interface";
 
 @Injectable({
     providedIn: 'root'
 })
 export class PostsApiService {
-    private _apiPostsAdapter = inject(ApiPostsAdapterService)
+    private _apiUrl = 'https://jsonplaceholder.typicode.com';
+    private _endpoint = 'posts';
 
-    getPosts(limit?: number): Observable<AppPost[]> {
+    constructor(private http: HttpClient) {
+    }
+
+    get<Type>(limit?: number): Observable<Type> {
         let params = new HttpParams();
         if (limit != null) params = params.set('_limit', limit);
 
-        return this._apiPostsAdapter.get<AppPost[]>(params)
+        return this.http.get<Type>(`${this._apiUrl}/${this._endpoint}`, {params});
     }
 
-    addPost(newPost: AppPost): Observable<AppPost> {
-        return this._apiPostsAdapter.post<AppPost>(newPost)
+    post<Type>(body: Type): Observable<Type> {
+        return this.http.post<Type>(`${this._apiUrl}/${this._endpoint}`, body);
     }
 
-    updatePost(post: AppPost): Observable<AppPost> {
-        return this._apiPostsAdapter.patch<AppPost, AppNewPostForm>(post.id, {
-            title: post.title,
-            body: post.body
-        })
+    patch<Type>(id: number, body: { title: string, body: string }): Observable<Type> {
+        return this.http.patch<Type>(`${this._apiUrl}/${this._endpoint}/${id}`, body);
     }
 
-    deletePost(id: number): Observable<void> {
-        return this._apiPostsAdapter.delete<void>(id)
+    delete<Type>(id: number): Observable<Type> {
+        return this.http.delete<Type>(`${this._apiUrl}/${this._endpoint}/${id}`);
     }
 }

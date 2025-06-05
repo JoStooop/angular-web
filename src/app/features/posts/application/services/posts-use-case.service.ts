@@ -1,5 +1,5 @@
-import {inject, Injectable} from '@angular/core';
-import {BehaviorSubject, map, Observable, tap} from "rxjs";
+import {Injectable} from '@angular/core';
+import {BehaviorSubject, from, map, Observable, tap} from "rxjs";
 import {AppPost} from "../common/models/post.interface";
 import {PostsApiService} from "../../../../application/services/posts.api.service";
 
@@ -7,27 +7,30 @@ import {PostsApiService} from "../../../../application/services/posts.api.servic
     providedIn: 'root'
 })
 export class PostsUseCaseService {
-    _postsApi = inject(PostsApiService)
     _activePostOperations$ = new BehaviorSubject<LoadingOperation[]>([])
 
+    constructor(private postsApiService: PostsApiService) {
+    }
+
     getPosts(limitPosts?: number): Observable<AppPost[]> {
-        return this._postsApi.getPosts(limitPosts);
+        return this.postsApiService.get<AppPost[]>(limitPosts);
     }
 
     addPost(newPost: AppPost): Observable<AppPost> {
         this.addLoadingOperation('add', newPost.id)
-        return this._postsApi.addPost(newPost).pipe(
+        return this.postsApiService.post(newPost).pipe(
             tap(() => this.removeLoadingOperation('add', newPost.id))
         );
     }
 
-    updatePost(updatedPost: AppPost): Observable<AppPost> {
-        return this._postsApi.updatePost(updatedPost);
+    updatePost(updatedPost: { title: string, body: string }): Observable<AppPost> {
+        // return this.postsApiService.patch<AppPost>(updatedPost);
+        return from([]);
     }
 
-    deletePost(postId: number): Observable<void> {
+    deletePost(postId: number): Observable<AppPost> {
         this.addLoadingOperation('delete', postId)
-        return this._postsApi.deletePost(postId).pipe(
+        return this.postsApiService.delete<AppPost>(postId).pipe(
             tap(() => this.removeLoadingOperation('delete', postId))
         );
     }
