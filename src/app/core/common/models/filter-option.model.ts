@@ -1,5 +1,5 @@
-export type FilterOption = 'hasTitle' | 'hasBody' | 'noTitle' | 'noBody'
+export type CoreFilterOption = 'hasTitle' | 'hasBody' | 'noTitle' | 'noBody'
 
-export interface AppFilterSelection {
-    label: FilterOption;
+export interface ICoreFilterSelection {
+    label: CoreFilterOption;
 }

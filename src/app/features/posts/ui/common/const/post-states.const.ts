@@ -1,6 +1,6 @@
-import {ViewEditMode} from "../../../application/common/models/post-form.interface";
+import {AppViewEditMode} from "../../../application/common/models/post-form.interface";
 
 export const POST_CARD_MODES = {
-    VIEW: 'view' as ViewEditMode,
-    EDIT: 'edit' as ViewEditMode
+    VIEW: 'view' as AppViewEditMode,
+    EDIT: 'edit' as AppViewEditMode
 }

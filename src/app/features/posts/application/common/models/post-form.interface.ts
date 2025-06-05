@@ -1,6 +1,6 @@
-export type ViewEditMode =  'view' | 'edit';
+export type AppViewEditMode =  'view' | 'edit';
 
-export interface AppNewPostForm {
+export interface IAppNewPostForm {
     title: string
     body: string
 }

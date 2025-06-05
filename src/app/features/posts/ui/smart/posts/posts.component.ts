@@ -21,15 +21,15 @@ import {MatProgressSpinner} from "@angular/material/progress-spinner";
 import {MatButton} from "@angular/material/button";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {
-    AddPostEvent,
+    IAppAddPostEvent,
     AppPost,
-    DeletePostEvent,
+    IAppDeletePostEvent,
     PostEvent,
-    UpdatePostEvent
+    IAppUpdatePostEvent
 } from "../../../application/common/models/post.interface";
 import {PostsUseCaseService} from "../../../application/services/posts-use-case.service";
-import {LoadingStatus} from "../../../../../application/common/models/loading-status.type";
-import {AppFilterSelection, FilterOption} from "../../../../../core/common/models/filter-option.model";
+import {AppLoadingStatus} from "../../../../../application/common/models/loading-status.type";
+import {ICoreFilterSelection, CoreFilterOption} from "../../../../../core/common/models/filter-option.model";
 import {PostCardComponent} from "../post-card/post-card.component";
 import {PostFormComponent} from "../../dumb/post-form/post-form.component";
 import {FilterOptionComponent} from "../../../../../ui/dumb/filter-option/filter-option.component";
@@ -62,13 +62,13 @@ export class PostsComponent implements OnInit {
     originalPosts$!: Observable<AppPost[]>;
     modifiedPosts$!: Observable<AppPost[]>
 
-    isPostsLoading$: BehaviorSubject<LoadingStatus> = new BehaviorSubject<LoadingStatus>('idle');
-    activeFilter$!: Observable<FilterOption | null>;
+    isPostsLoading$: BehaviorSubject<AppLoadingStatus> = new BehaviorSubject<AppLoadingStatus>('idle');
+    activeFilter$!: Observable<CoreFilterOption | null>;
 
     deletePost$: Subject<number> = new Subject<number>();
     updatePost$: Subject<AppPost> = new Subject<AppPost>();
     createPost$: Subject<void> = new Subject<void>();
-    applyFilter$: Subject<FilterOption> = new Subject<FilterOption>();
+    applyFilter$: Subject<CoreFilterOption> = new Subject<CoreFilterOption>();
     resetFilter$: Subject<void> = new Subject<void>();
 
     searchPostControl: FormControl = new FormControl('');
@@ -77,7 +77,7 @@ export class PostsComponent implements OnInit {
         body: new FormControl('', [Validators.required, Validators.minLength(3)])
     });
 
-    filterOptions: AppFilterSelection[] = [
+    filterOptions: ICoreFilterSelection[] = [
         {label: 'hasTitle'},
         {label: 'hasBody'},
         {label: 'noTitle'},
@@ -116,7 +116,7 @@ export class PostsComponent implements OnInit {
             this.deletePost$.pipe(
                 mergeMap(id =>
                     this.postsUseCase.deletePost(id).pipe(
-                        map((): DeletePostEvent => ({evt: 'delete', id})),
+                        map((): IAppDeletePostEvent => ({evt: 'delete', id})),
                     )
                 ),
                 tap(() => this._snackBar.open('Post deleted', 'Close', {duration: 2000}))
@@ -124,7 +124,7 @@ export class PostsComponent implements OnInit {
             this.updatePost$.pipe(
                 switchMap(updatedPost =>
                     this.postsUseCase.updatePost(updatedPost).pipe(
-                        map((): UpdatePostEvent => ({evt: 'update', post: updatedPost})),
+                        map((): IAppUpdatePostEvent => ({evt: 'update', post: updatedPost})),
                     )
                 ),
                 tap(() => this._snackBar.open('Post updated', 'Close', {duration: 2000}))
@@ -138,7 +138,7 @@ export class PostsComponent implements OnInit {
                 })),
                 switchMap(newPost =>
                     this.postsUseCase.addPost(newPost).pipe(
-                        map((): AddPostEvent => ({evt: 'add', post: newPost})),
+                        map((): IAppAddPostEvent => ({evt: 'add', post: newPost})),
                     )
                 ),
                 tap(() => {
@@ -176,7 +176,7 @@ export class PostsComponent implements OnInit {
         );
     }
 
-    private applyFilterToPosts(posts: AppPost[], filter: FilterOption | null): AppPost[] {
+    private applyFilterToPosts(posts: AppPost[], filter: CoreFilterOption | null): AppPost[] {
         if (!filter) return [...posts]
 
         const hasTitle = (post: AppPost) => post.title.length > 0;
@@ -202,7 +202,7 @@ export class PostsComponent implements OnInit {
         return posts.filter(post => post.body.toLowerCase().includes(query.toLowerCase()))
     }
 
-    private applyFilterAndSearchByPosts(posts: AppPost[], filter: FilterOption | null, query: string): AppPost[] {
+    private applyFilterAndSearchByPosts(posts: AppPost[], filter: CoreFilterOption | null, query: string): AppPost[] {
         let result = [...posts]
 
         if (filter) result = this.applyFilterToPosts(result, filter)

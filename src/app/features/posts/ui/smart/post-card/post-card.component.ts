@@ -4,7 +4,7 @@ import {AppPost} from "../../../application/common/models/post.interface";
 import {FormsModule} from "@angular/forms";
 import {PostViewComponent} from "../../dumb/post-view/post-view.component";
 import {PostEditComponent} from "../../dumb/post-edit/post-edit.component";
-import {AppNewPostForm, ViewEditMode} from "../../../application/common/models/post-form.interface";
+import {IAppNewPostForm, AppViewEditMode} from "../../../application/common/models/post-form.interface";
 import {POST_CARD_MODES} from "../../common/const/post-states.const";
 import {Observable, shareReplay, Subject, tap} from "rxjs";
 import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
@@ -43,8 +43,8 @@ export class PostCardComponent implements OnInit {
 
     isDeletePostLoading$!: Observable<boolean>
 
-    isPostViewMode: ViewEditMode = POST_CARD_MODES.VIEW
-    newPostForm: AppNewPostForm = {title: '', body: ''};
+    isPostViewMode: AppViewEditMode = POST_CARD_MODES.VIEW
+    newPostForm: IAppNewPostForm = {title: '', body: ''};
 
     ngOnInit() {
         this.isDeletePostLoading$ = this.postsUseCase.isPostLoading(this.post.id, 'delete')

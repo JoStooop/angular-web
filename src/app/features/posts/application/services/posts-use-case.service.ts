@@ -24,7 +24,7 @@ export class PostsUseCaseService {
     }
 
     updatePost(updatedPost: { title: string, body: string }): Observable<AppPost> {
-        // return this.postsApiService.patch<AppPost>(updatedPost);
+        // return this.postsApiService.patch<Post>(updatedPost);
         return from([]);
     }
 

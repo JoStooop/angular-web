@@ -5,25 +5,25 @@ export interface AppPost {
     body: string
 }
 
-type EventName = 'add' | 'delete' | 'update'
+type AppEventName = 'add' | 'delete' | 'update'
 
-interface BasePostEvent {
-    evt: EventName;
+interface IAppBasePostEvent {
+    evt: AppEventName;
 }
 
-export interface AddPostEvent extends BasePostEvent {
+export interface IAppAddPostEvent extends IAppBasePostEvent {
     evt: 'add';
     post: AppPost;
 }
 
-export interface DeletePostEvent extends BasePostEvent {
+export interface IAppDeletePostEvent extends IAppBasePostEvent {
     evt: 'delete';
     id: number;
 }
 
-export interface UpdatePostEvent extends BasePostEvent {
+export interface IAppUpdatePostEvent extends IAppBasePostEvent {
     evt: 'update';
     post: AppPost;
 }
 
-export type PostEvent = AppPost[] | AddPostEvent | DeletePostEvent | UpdatePostEvent
+export type PostEvent = AppPost[] | IAppAddPostEvent | IAppDeletePostEvent | IAppUpdatePostEvent
