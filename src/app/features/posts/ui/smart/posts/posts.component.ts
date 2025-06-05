@@ -20,7 +20,13 @@ import {MatSelectModule} from "@angular/material/select";
 import {MatProgressSpinner} from "@angular/material/progress-spinner";
 import {MatButton} from "@angular/material/button";
 import {MatFormFieldModule} from "@angular/material/form-field";
-import {AppPost} from "../../../application/common/models/post.interface";
+import {
+    AddPostEvent,
+    AppPost,
+    DeletePostEvent,
+    PostEvent,
+    UpdatePostEvent
+} from "../../../application/common/models/post.interface";
 import {PostsUseCaseService} from "../../../application/services/posts-use-case.service";
 import {LoadingStatus} from "../../../../../application/common/models/loading-status.type";
 import {AppFilterSelection, FilterOption} from "../../../../../core/common/models/filter-option.model";
@@ -110,7 +116,7 @@ export class PostsComponent implements OnInit {
             this.deletePost$.pipe(
                 mergeMap(id =>
                     this.postsUseCase.deletePost(id).pipe(
-                        map(() => ({evt: 'delete', id})),
+                        map((): DeletePostEvent => ({evt: 'delete', id})),
                     )
                 ),
                 tap(() => this._snackBar.open('Post deleted', 'Close', {duration: 2000}))
@@ -118,7 +124,7 @@ export class PostsComponent implements OnInit {
             this.updatePost$.pipe(
                 switchMap(updatedPost =>
                     this.postsUseCase.updatePost(updatedPost).pipe(
-                        map(() => ({evt: 'update', post: updatedPost})),
+                        map((): UpdatePostEvent => ({evt: 'update', post: updatedPost})),
                     )
                 ),
                 tap(() => this._snackBar.open('Post updated', 'Close', {duration: 2000}))
@@ -132,7 +138,7 @@ export class PostsComponent implements OnInit {
                 })),
                 switchMap(newPost =>
                     this.postsUseCase.addPost(newPost).pipe(
-                        map(() => ({evt: 'add', post: newPost})),
+                        map((): AddPostEvent => ({evt: 'add', post: newPost})),
                     )
                 ),
                 tap(() => {
@@ -141,7 +147,7 @@ export class PostsComponent implements OnInit {
                 }),
             )
         ).pipe(
-            scan((acc: AppPost[], evt: any) => {
+            scan((acc: AppPost[], evt: PostEvent): AppPost[] => {
                 if (Array.isArray(evt)) {
                     return this.clearEverySecondTitleAndFifthBody(evt);
                 }
