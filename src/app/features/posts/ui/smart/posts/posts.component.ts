@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component} from '@angular/core';
 import {OnInit} from '@angular/core';
 import {AsyncPipe} from "@angular/common";
 import {UntilDestroy} from "@ngneat/until-destroy";
@@ -56,14 +56,12 @@ import {MatSnackBar} from "@angular/material/snack-bar";
     styleUrl: './posts.component.scss'
 })
 export class PostsComponent implements OnInit {
-    postsUseCase = inject(PostsUseCaseService);
-    private _snackBar = inject(MatSnackBar)
-
     originalPosts$!: Observable<AppPost[]>;
     modifiedPosts$!: Observable<AppPost[]>
+    activeFilter$!: Observable<CoreFilterOption | null>;
+    isCreatePostLoading$!: Observable<boolean>
 
     isPostsLoading$: BehaviorSubject<AppLoadingStatus> = new BehaviorSubject<AppLoadingStatus>('idle');
-    activeFilter$!: Observable<CoreFilterOption | null>;
 
     deletePost$: Subject<number> = new Subject<number>();
     updatePost$: Subject<AppPost> = new Subject<AppPost>();
@@ -84,19 +82,22 @@ export class PostsComponent implements OnInit {
         {label: 'noBody'}
     ];
 
-
-    isCreatePostLoading$!: Observable<boolean>
+    constructor(
+        private postsUseCaseService: PostsUseCaseService,
+        private snackBar: MatSnackBar
+    ) {
+    }
 
     // TODO: добить обработку ошибок в catchError
     ngOnInit(): void {
-        this.isCreatePostLoading$ = this.postsUseCase.isCreatePostLoading()
+        this.isCreatePostLoading$ = this.postsUseCaseService.isCreatePostLoading()
 
 
-        this.originalPosts$ = this.postsUseCase.getPosts(20).pipe(
+        this.originalPosts$ = this.postsUseCaseService.getPosts(20).pipe(
             tap(() => this.isPostsLoading$.next('loading')),
             catchError(() => {
                 this.isPostsLoading$.next('failed')
-                this._snackBar.open('Failed to fetch posts', 'Close', {duration: 3000})
+                this.snackBar.open('Failed to fetch posts', 'Close', {duration: 3000})
                 return of([])
             }),
             shareReplay(1),
@@ -115,19 +116,19 @@ export class PostsComponent implements OnInit {
                 .pipe(map(originalPosts => this.clearEverySecondTitleAndFifthBody(originalPosts))),
             this.deletePost$.pipe(
                 mergeMap(id =>
-                    this.postsUseCase.deletePost(id).pipe(
+                    this.postsUseCaseService.deletePost(id).pipe(
                         map((): IAppDeletePostEvent => ({evt: 'delete', id})),
                     )
                 ),
-                tap(() => this._snackBar.open('Post deleted', 'Close', {duration: 2000}))
+                tap(() => this.snackBar.open('Post deleted', 'Close', {duration: 2000}))
             ),
             this.updatePost$.pipe(
                 switchMap(updatedPost =>
-                    this.postsUseCase.updatePost(updatedPost).pipe(
+                    this.postsUseCaseService.updatePost(updatedPost).pipe(
                         map((): IAppUpdatePostEvent => ({evt: 'update', post: updatedPost})),
                     )
                 ),
-                tap(() => this._snackBar.open('Post updated', 'Close', {duration: 2000}))
+                tap(() => this.snackBar.open('Post updated', 'Close', {duration: 2000}))
             ),
             this.createPost$.pipe(
                 filter(() => this.createPostFormGroup.valid),
@@ -137,13 +138,13 @@ export class PostsComponent implements OnInit {
                     ...this.createPostFormGroup.value
                 })),
                 switchMap(newPost =>
-                    this.postsUseCase.addPost(newPost).pipe(
+                    this.postsUseCaseService.addPost(newPost).pipe(
                         map((): IAppAddPostEvent => ({evt: 'add', post: newPost})),
                     )
                 ),
                 tap(() => {
                     this.createPostFormGroup.reset()
-                    this._snackBar.open('Post created', 'Close', {duration: 2000})
+                    this.snackBar.open('Post created', 'Close', {duration: 2000})
                 }),
             )
         ).pipe(

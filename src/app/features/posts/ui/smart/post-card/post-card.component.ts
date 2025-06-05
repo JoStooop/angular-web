@@ -1,4 +1,4 @@
-import {Component, EventEmitter, inject, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {AppPost} from "../../../application/common/models/post.interface";
 import {FormsModule} from "@angular/forms";
@@ -19,10 +19,6 @@ import {PostsUseCaseService} from "../../../application/services/posts-use-case.
     styleUrls: ['./post-card.component.scss']
 })
 export class PostCardComponent implements OnInit {
-    private postsUseCase = inject(PostsUseCaseService);
-
-    _post!: AppPost
-
     @Input() set post(post: AppPost) {
         this._post = post;
         this.isPostViewMode = POST_CARD_MODES.VIEW
@@ -35,19 +31,25 @@ export class PostCardComponent implements OnInit {
     @Output() postDeleted$: EventEmitter<number> = new EventEmitter<number>()
     @Output() postEdited$: EventEmitter<AppPost> = new EventEmitter<AppPost>()
 
-    readonly POST_CARD_MODES = POST_CARD_MODES;
+    isDeletePostLoading$!: Observable<boolean>
 
     startEditPost$: Subject<void> = new Subject<void>()
     cancelEditPost$: Subject<void> = new Subject<void>()
     savePost$: Subject<void> = new Subject<void>()
 
-    isDeletePostLoading$!: Observable<boolean>
+    readonly POST_CARD_MODES = POST_CARD_MODES;
 
     isPostViewMode: AppViewEditMode = POST_CARD_MODES.VIEW
     newPostForm: IAppNewPostForm = {title: '', body: ''};
 
+    _post!: AppPost
+
+    constructor(private postsUseCaseService: PostsUseCaseService) {
+    }
+
+
     ngOnInit() {
-        this.isDeletePostLoading$ = this.postsUseCase.isPostLoading(this.post.id, 'delete')
+        this.isDeletePostLoading$ = this.postsUseCaseService.isPostLoading(this.post.id, 'delete')
 
         this.initializeSideEffects()
     }

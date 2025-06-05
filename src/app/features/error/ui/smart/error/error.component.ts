@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Location} from '@angular/common';
 import {RouterLink} from "@angular/router"
 import {MatCardModule} from '@angular/material/card';
@@ -20,11 +20,13 @@ import {Subject} from "rxjs";
     styleUrl: './error.component.scss'
 })
 export class ErrorComponent implements OnInit {
-    location = inject(Location)
+    goBack$: Subject<void> = new Subject<void>()
 
     ROUTE = CORE_ROUTE_PATHS;
 
-    goBack$: Subject<void> = new Subject<void>()
+    constructor(private location: Location) {
+    }
+
 
     ngOnInit(): void {
         this.initializeSideEffects()

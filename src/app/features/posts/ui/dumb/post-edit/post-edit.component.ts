@@ -17,10 +17,6 @@ import {AsyncPipe} from "@angular/common";
     styleUrl: './post-edit.component.scss'
 })
 export class PostEditComponent {
-    _newPostForm!: IAppNewPostForm
-
-    newPostForm$: BehaviorSubject<IAppNewPostForm | null> = new BehaviorSubject<IAppNewPostForm | null>(null)
-
     @Input()
     set newPostForm(newPostForm: IAppNewPostForm) {
         this._newPostForm = newPostForm;
@@ -29,4 +25,8 @@ export class PostEditComponent {
 
     @Output() savePost: EventEmitter<void> = new EventEmitter<void>()
     @Output() cancelEdit: EventEmitter<void> = new EventEmitter<void>()
+
+    newPostForm$: BehaviorSubject<IAppNewPostForm | null> = new BehaviorSubject<IAppNewPostForm | null>(null)
+
+    _newPostForm!: IAppNewPostForm
 }

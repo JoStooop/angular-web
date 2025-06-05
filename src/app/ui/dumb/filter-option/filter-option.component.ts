@@ -20,11 +20,6 @@ import {AsyncPipe} from "@angular/common";
     styleUrl: './filter-option.component.scss'
 })
 export class FilterOptionComponent {
-    _filterOptions!: ICoreFilterSelection[]
-    _activeFilter!: CoreFilterOption | null
-
-    activeFilter$: BehaviorSubject<CoreFilterOption | null> = new BehaviorSubject<CoreFilterOption | null>(null);
-
     @Input()
     set filterOptions(filterOptions: ICoreFilterSelection[]) {
         this._filterOptions = filterOptions;
@@ -42,4 +37,10 @@ export class FilterOptionComponent {
     }
 
     @Output() filterChanged = new EventEmitter<CoreFilterOption>();
+
+    activeFilter$: BehaviorSubject<CoreFilterOption | null> = new BehaviorSubject<CoreFilterOption | null>(null);
+
+    _filterOptions!: ICoreFilterSelection[]
+    _activeFilter!: CoreFilterOption | null
+
 }

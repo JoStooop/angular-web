@@ -24,11 +24,6 @@ import {BehaviorSubject} from "rxjs";
     styleUrl: './post-form.component.scss'
 })
 export class PostFormComponent {
-    _formGroup!: FormGroup
-    _isCreatePostLoading: boolean = false
-
-    isCreatePostLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
-
     @Input()
     set formGroup(formGroup: FormGroup) {
         this._formGroup = formGroup;
@@ -45,4 +40,9 @@ export class PostFormComponent {
     }
 
     @Output() onSubmit: EventEmitter<void> = new EventEmitter<void>()
+
+    isCreatePostLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+
+    _formGroup!: FormGroup
+    _isCreatePostLoading: boolean = false
 }

@@ -15,12 +15,6 @@ import {BehaviorSubject} from "rxjs";
     styleUrl: './post-view.component.scss'
 })
 export class PostViewComponent {
-    _post!: AppPost
-    _isDeletePostLoading: boolean = false
-
-    post$: BehaviorSubject<AppPost | null> = new BehaviorSubject<AppPost | null>(null)
-    isDeletePostLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
-
     @Input()
     set post(post: AppPost) {
         this._post = post;
@@ -35,4 +29,11 @@ export class PostViewComponent {
 
     @Output() deletePost: EventEmitter<void> = new EventEmitter<void>()
     @Output() editPost: EventEmitter<void> = new EventEmitter<void>()
+
+
+    post$: BehaviorSubject<AppPost | null> = new BehaviorSubject<AppPost | null>(null)
+    isDeletePostLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+
+    _post!: AppPost
+    _isDeletePostLoading: boolean = false
 }
