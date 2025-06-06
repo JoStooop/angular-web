@@ -1,9 +1,9 @@
 <mat-form-field appearance="outline">
     <mat-label>Filters:</mat-label>
     <mat-select [value]="selected$ | async">
-        @for (option of options; track option.label) {
-            <mat-option [value]="option.label" (click)="selectionChange.emit(option.label)">
-                {{ option.label }}
+        @for (filter of filters; track filter.label) {
+            <mat-option [value]="filter.label" (click)="selectionChange.emit(filter.label)">
+                {{ filter.label }}
             </mat-option>
         }
     </mat-select>

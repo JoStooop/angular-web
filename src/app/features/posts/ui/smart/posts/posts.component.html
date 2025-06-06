@@ -7,12 +7,12 @@
 @if ((isPostsLoading$ | async) === 'failed') {
     <div>Posts didn't load</div>
 } @else {
-    <app-post-form (submitForm)="createPost$.next($event)"></app-post-form>
+    <app-post-form (createPost)="createPost$.next($event)"></app-post-form>
 
     <div class="posts-actions">
         <div class="filters-actions">
             <app-filter-dropdown
-                [options]="filters"
+                [filters]="filters"
                 [selected]="activeFilter$ | async"
                 (selectionChange)="applyFilter$.next($event)"
             ></app-filter-dropdown>

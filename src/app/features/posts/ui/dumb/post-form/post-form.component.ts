@@ -27,17 +27,17 @@ import {UntilDestroy, untilDestroyed} from "@ngneat/until-destroy";
     styleUrl: './post-form.component.scss'
 })
 export class PostFormComponent implements OnInit {
-    @Input() set isCreatePostLoading(isCreatePostLoading: boolean) {
-        this.isCreatePostLoading$.next(isCreatePostLoading);
+    @Input() set isSubmittingPost(isCreatePostLoading: boolean) {
+        this.isSubmittingPost$.next(isCreatePostLoading);
     }
 
-    @Output() submitForm: EventEmitter<Partial<IAppPost>> = new EventEmitter<Partial<IAppPost>>()
+    @Output() createPost: EventEmitter<Partial<IAppPost>> = new EventEmitter<Partial<IAppPost>>()
 
-    submit$: Subject<void> = new Subject<void>();
+    createPostTrigger$: Subject<void> = new Subject<void>();
 
-    isCreatePostLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+    isSubmittingPost$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
 
-    formGroup: FormGroup = new FormGroup({
+    creatingPostFormGroup: FormGroup = new FormGroup({
         title: new FormControl('', [Validators.required, Validators.minLength(2)]),
         body: new FormControl('', [Validators.required, Validators.minLength(3)])
     });
@@ -47,11 +47,11 @@ export class PostFormComponent implements OnInit {
     }
 
     private initializeSideEffects(): void {
-        this.submit$
+        this.createPostTrigger$
             .pipe(untilDestroyed(this))
             .subscribe(() => {
-                this.submitForm.emit(this.formGroup.value)
-                this.formGroup.reset()
+                this.createPost.emit(this.creatingPostFormGroup.value)
+                this.creatingPostFormGroup.reset()
             })
     }
 }

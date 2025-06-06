@@ -20,7 +20,7 @@ import {CoreFilterOptions, ICoreFilterSelections} from "../../../core/common/mod
     styleUrl: './filter-dropdown.component.scss'
 })
 export class FilterDropdownComponent {
-    @Input() options: ICoreFilterSelections[] = []
+    @Input() filters: ICoreFilterSelections[] = []
 
     @Input() set selected(activeFilter: CoreFilterOptions | null) {
         this.selected$.next(activeFilter);
