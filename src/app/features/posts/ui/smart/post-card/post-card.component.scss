@@ -1,0 +1,79 @@
+@use '../../../../../../assets/styles/mixins/mixins-screen';
+@use '../../../../../../assets/styles/mixins/mixins-flex';
+:host {
+
+    @include mixins-screen.max-medium {
+        padding: 0 1.5rem;
+    }
+}
+
+
+
+.card {
+    max-height: 250px;
+    display: flex;
+    flex-direction: row;
+    transition: transform 0.2s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+    }
+
+    &-header {
+        margin-left: 1rem;
+        @include mixins-flex.flex(column, flex-start, flex-start);
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+
+    &-id {
+        display: flex;
+        font-size: 1.2rem;
+        align-items: center
+
+
+    }
+
+    &-content {
+        display: flex;
+        max-width: 80rem;
+        padding: 1rem 0 0 1rem;
+        cursor: pointer;
+    }
+
+    &-actions {
+        width: 300px;
+        margin-left: auto;
+        @include mixins-flex.flex(column, space-between, flex-end);
+        gap: 0.8rem;
+    }
+}
+
+.form {
+    width: 800px;
+    @include mixins-flex.flex(column, flex-start, center);
+    gap: 2rem;
+
+
+    &-field {
+        width: 100%;
+    }
+}
+
+@include mixins-screen.max-medium {
+    .card {
+        display: flex;
+        flex-direction: column;
+
+        &-header {
+            margin-bottom: 0.8rem;
+        }
+
+        &-actions {
+            width: 250px;
+            display: flex;
+            flex-direction: row;
+        }
+    }
+}

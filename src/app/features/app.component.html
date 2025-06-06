@@ -11,7 +11,7 @@
                         <mat-icon class="error-icon">error</mat-icon>
                         <p class="error-message">Все сломано :(</p>
                     </div>
-                    <button mat-flat-button (click)="reloadPage()">Перезагрузить</button>
+                    <button mat-flat-button (click)="reloadPage$.next()">Перезагрузить</button>
                 </div>
             </mat-card-content>
         </mat-card>

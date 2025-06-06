@@ -1,0 +1,14 @@
+$screen-phone: 576px;
+$screen-table: 768px;
+
+@mixin max-small {
+    @media (max-width: #{$screen-phone}) {
+        @content;
+    }
+}
+
+@mixin max-medium {
+    @media (max-width: #{$screen-table}) {
+        @content;
+    }
+}

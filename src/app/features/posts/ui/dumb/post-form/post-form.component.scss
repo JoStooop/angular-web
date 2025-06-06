@@ -1,0 +1,30 @@
+@use '../../../../../../assets/styles/mixins/mixins-flex';
+@use '../../../../../../assets/styles/mixins/mixins-screen';
+
+:host {
+    width: 100%;
+    @include mixins-flex.flex(row, flex-start, center);
+
+    @include mixins-screen.max-medium {
+        display: flex;
+        justify-content: center;
+    }
+}
+
+.card {
+    width: 450px;
+}
+
+.form {
+    @include mixins-flex.flex(column, flex-start, center);
+    gap: 2rem;
+
+
+    &-field {
+        width: 100%;
+    }
+
+    &-button {
+        width: 30%;
+    }
+}
