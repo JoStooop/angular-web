@@ -1,29 +1,39 @@
-export interface AppPost {
+export interface IAppPost {
     userId: number;
     id: number;
     title: string;
     body: string
 }
 
-type AppEventName = 'add' | 'delete' | 'update'
+export type AppEventType = 'init' | 'add' | 'delete' | 'update'
 
 interface IAppBasePostEvent {
-    evt: AppEventName;
+    action: AppEventType;
+}
+
+export interface IAppInitPostEvent extends IAppBasePostEvent {
+    action: 'init';
+    payload: IAppPost[];
 }
 
 export interface IAppAddPostEvent extends IAppBasePostEvent {
-    evt: 'add';
-    post: AppPost;
+    action: 'add';
+    payload: IAppPost;
 }
 
 export interface IAppDeletePostEvent extends IAppBasePostEvent {
-    evt: 'delete';
-    id: number;
+    action: 'delete';
+    payload: number;
 }
 
 export interface IAppUpdatePostEvent extends IAppBasePostEvent {
-    evt: 'update';
-    post: AppPost;
+    action: 'update';
+    payload: IAppPost;
 }
 
-export type PostEvent = AppPost[] | IAppAddPostEvent | IAppDeletePostEvent | IAppUpdatePostEvent
+export type AppPostEvent = IAppInitPostEvent | IAppAddPostEvent | IAppDeletePostEvent | IAppUpdatePostEvent
+
+export interface IAppLoadingOperation {
+    operation: AppEventType;
+    postId: number;
+}

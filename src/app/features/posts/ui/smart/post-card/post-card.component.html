@@ -1,15 +1,36 @@
-@switch (isPostViewMode) {
-    @case (POST_CARD_MODES.VIEW) {
-        <app-post-view [post]="post"
-                       [isDeletePostLoading]="(isDeletePostLoading$ | async) ?? false"
-                       (deletePost)="postDeleted$.emit(post.id)"
-                       (editPost)="startEditPost$.next()">
-        </app-post-view>
-    }
-    @case (POST_CARD_MODES.EDIT) {
-        <app-post-edit [newPostForm]="newPostForm"
-                       (savePost)="savePost$.next()"
-                       (cancelEdit)="cancelEditPost$.next()">
-        </app-post-edit>
-    }
-}
+<mat-card class="card" appearance="outlined">
+    <div class="card-content">
+            <span class="card-id">{{ post.id }}</span>
+        <div class="card-header">
+
+            @if (isEditMode$ | async) {
+                <form [formGroup]="editForm" class="form">
+                    <mat-form-field class="form-field" appearance="outline">
+                        <mat-label>Title</mat-label>
+                        <input matInput formControlName="title" name="title"/>
+                    </mat-form-field>
+                    <mat-form-field class="form-field" appearance="outline">
+                        <mat-label>Body</mat-label>
+                        <textarea matInput formControlName="body" name="body"></textarea>
+                    </mat-form-field>
+                </form>
+            } @else {
+                <mat-card-title>{{ post.title | truncate:80 }}</mat-card-title>
+                <mat-card-subtitle>{{ post.body | truncate:150 }}</mat-card-subtitle>
+            }
+        </div>
+    </div>
+    <mat-card-actions class="card-actions" align="end">
+        @if (isEditMode$ | async) {
+            <button mat-raised-button color="primary" (click)="saveEdit$.next()">
+                {{ (isUpdatePostLoading$ | async) ? 'Saving...' : 'Save' }}
+            </button>
+            <button mat-raised-button (click)="cancelEdit$.next()">Cancel</button>
+        } @else {
+            <button mat-raised-button color="warn" [disabled]="(isDeletePostLoading$ | async)" (click)="postDeleted$.next(this.post.id)">
+                {{ (isDeletePostLoading$ | async) ? 'Deleting...' : 'Delete' }}
+            </button>
+            <button mat-raised-button (click)="startEdit$.next()">Edit</button>
+        }
+    </mat-card-actions>
+</mat-card>

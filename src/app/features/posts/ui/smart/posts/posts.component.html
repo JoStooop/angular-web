@@ -4,27 +4,26 @@
     </div>
 }
 
-@if ((isPostsLoading$ | async) === 'failed' || ((originalPosts$ | async)?.length === 0)) {
+@if ((isPostsLoading$ | async) === 'failed') {
     <div>Posts didn't load</div>
 } @else {
-    <app-post-form [formGroup]="createPostFormGroup" (onSubmit)="createPost$.next()" [isCreatePostLoading]="(isCreatePostLoading$ | async) ?? false"></app-post-form>
+    <app-post-form (submitForm)="createPost$.next($event)"></app-post-form>
 
     <div class="posts-actions">
         <div class="filters-actions">
-            <app-filter-option
-                [filterOptions]="filterOptions"
-                [activeFilter]="activeFilter$ | async"
-                (filterChanged)="applyFilter$.next($event)"
-            ></app-filter-option>
+            <app-filter-dropdown
+                [options]="filters"
+                [selected]="activeFilter$ | async"
+                (selectionChange)="applyFilter$.next($event)"
+            ></app-filter-dropdown>
 
-            @if ((activeFilter$ | async) !== null) {
+            @if (!!(activeFilter$ | async)) {
                 <button mat-raised-button (click)="resetFilter$.next()">Reset</button>
             }
         </div>
 
         <mat-form-field class="search" appearance="outline">
-            <mat-label>Search</mat-label>
-            <input matInput type="text" [formControl]="searchPostControl">
+            <input matInput type="text" placeholder="Search" [formControl]="searchPostControl">
         </mat-form-field>
     </div>
 
@@ -34,9 +33,9 @@
         @for (post of modifiedPosts$ | async; track post.id) {
             <app-post-card
                 [post]="post"
-                (postDeleted$)="deletePost$.next($event)"
-                (postEdited$)="updatePost$.next($event)"
-            ></app-post-card>
+                (updatePost$)="updatePost$.next($event)"
+                (postDeleted$)="deletePost$.next($event)">
+            </app-post-card>
         }
     }
 }

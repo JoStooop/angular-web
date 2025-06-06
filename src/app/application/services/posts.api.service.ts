@@ -6,8 +6,9 @@ import {Observable} from "rxjs";
     providedIn: 'root'
 })
 export class PostsApiService {
-    private _apiUrl = 'https://jsonplaceholder.typicode.com';
-    private _endpoint = 'posts';
+    private _apiUrl: string = 'https://jsonplaceholder.typicode.com';
+    private _endpoint: string = 'posts';
+    private _apiEndpoint: string = `${this._apiUrl}/${this._endpoint}`;
 
     constructor(private http: HttpClient) {
     }
@@ -16,18 +17,18 @@ export class PostsApiService {
         let params = new HttpParams();
         if (limit != null) params = params.set('_limit', limit);
 
-        return this.http.get<Type>(`${this._apiUrl}/${this._endpoint}`, {params});
+        return this.http.get<Type>(this._apiEndpoint, {params});
     }
 
     post<Type>(body: Type): Observable<Type> {
-        return this.http.post<Type>(`${this._apiUrl}/${this._endpoint}`, body);
+        return this.http.post<Type>(this._apiEndpoint, body);
     }
 
-    patch<Type>(id: number, body: { title: string, body: string }): Observable<Type> {
-        return this.http.patch<Type>(`${this._apiUrl}/${this._endpoint}/${id}`, body);
+    patch<Type>(id: number, body: Partial<Type>): Observable<Type> {
+        return this.http.patch<Type>(`${this._apiEndpoint}/${id}`, body);
     }
 
     delete<Type>(id: number): Observable<Type> {
-        return this.http.delete<Type>(`${this._apiUrl}/${this._endpoint}/${id}`);
+        return this.http.delete<Type>(`${this._apiEndpoint}/${id}`);
     }
 }

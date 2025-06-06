@@ -1,6 +1,6 @@
 <mat-card class="card">
     <mat-card-content>
-        <form class="form" (ngSubmit)="onSubmit.emit()" [formGroup]="formGroup">
+        <form class="form" (ngSubmit)="submit$.next()" [formGroup]="formGroup">
             <mat-form-field class="form-field" appearance="outline">
                 <mat-label>Title</mat-label>
                 <input color="primary" matInput formControlName="title" name="title">
@@ -15,7 +15,7 @@
                     mat-raised-button
                     color="primary"
                     type="submit"
-                    [disabled]="(isCreatePostLoading$ | async) || !formGroup.valid">
+                    [disabled]="(isCreatePostLoading$ | async) || formGroup.invalid">
                 {{ (isCreatePostLoading$ | async) ? 'Sending' : 'Create post' }}
             </button>
         </form>
